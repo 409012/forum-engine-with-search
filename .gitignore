@@ -1,0 +1,9 @@
+bin
+obj
+.idea
+bundles
+.vs
+*.user
+launchSettings.json
+.DS_Store
+
