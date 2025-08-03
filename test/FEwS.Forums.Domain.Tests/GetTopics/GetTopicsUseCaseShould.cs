@@ -13,8 +13,8 @@ public class GetTopicsUseCaseShould
 {
     private readonly GetTopicsUseCase sut;
     private readonly Mock<IGetTopicsStorage> storage;
-    private readonly ISetup<IGetTopicsStorage,Task<(IEnumerable<Topic> resources, int totalCount)>> getTopicsSetup;
     private readonly ISetup<IGetForumsStorage,Task<IEnumerable<Forum>>> getForumsSetup;
+    private readonly ISetup<IGetTopicsStorage, Task<TopicsPagedResult>> getTopicsSetup;
 
     public GetTopicsUseCaseShould()
     {
@@ -58,13 +58,15 @@ public class GetTopicsUseCaseShould
                 Title = "A Forum"
             }
         ]);
-        var expectedResources = new Topic[] { new()
+        var expectedResources = new TopicReadModel[] { new()
             {
-                Title = "A Topic"
+                Title = "A Topic",
+                LastComment = null,
+                TotalCommentsCount = 0
             }
         };
         var expectedTotalCount = 6;
-        getTopicsSetup.ReturnsAsync((expectedResources, expectedTotalCount));
+        getTopicsSetup.ReturnsAsync(new TopicsPagedResult(expectedResources, expectedTotalCount));
 
         var (actualResources, actualTotalCount) = await sut.Handle(
             new GetTopicsQuery(forumId, 5, 10), CancellationToken.None);

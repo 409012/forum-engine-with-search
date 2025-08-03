@@ -1,15 +1,15 @@
-﻿namespace FEwS.Forums.Domain.UseCases.GetTopics;
+﻿namespace FEwS.Forums.Domain.Models;
 
-public class TopicsListItem
+public class TopicReadModel
 {
     public Guid Id { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
     public required string Title { get; set; }
     public int TotalCommentsCount { get; set; }
-    public TopicsListLastComment? LastComment { get; set; }
+    public TopicTopicReadModelComment? LastComment { get; set; }
 }
 
-public class TopicsListLastComment
+public class TopicTopicReadModelComment
 {
     public Guid? Id { get; set; }
     public DateTimeOffset? CreatedAt { get; set; }

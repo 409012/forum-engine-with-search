@@ -7,9 +7,9 @@ namespace FEwS.Forums.Domain.UseCases.GetTopics;
 internal class GetTopicsUseCase(
     IGetForumsStorage getForumsStorage,
     IGetTopicsStorage storage)
-    : IRequestHandler<GetTopicsQuery, (IEnumerable<Topic> resources, int totalCount)>
+    : IRequestHandler<GetTopicsQuery, TopicsPagedResult>
 {
-    public async Task<(IEnumerable<Topic> resources, int totalCount)> Handle(
+    public async Task<TopicsPagedResult> Handle(
         GetTopicsQuery query, CancellationToken cancellationToken)
     {
         await getForumsStorage.ThrowIfForumNotFound(query.ForumId, cancellationToken);

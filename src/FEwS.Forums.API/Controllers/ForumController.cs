@@ -63,7 +63,7 @@ public class ForumController(
         CancellationToken cancellationToken)
     {
         var query = new GetTopicsQuery(forumId, skip, take);
-        var (resources, totalCount) = await mediator.Send(query, cancellationToken);
-        return Ok(new { resources = resources.Select(mapper.Map<Topic>), totalCount });
+        var topicsPagedResult = await mediator.Send(query, cancellationToken);
+        return Ok(mapper.Map<TopicsPagedResult>(topicsPagedResult));
     }
 }

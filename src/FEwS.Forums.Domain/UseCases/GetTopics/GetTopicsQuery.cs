@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FEwS.Forums.Domain.UseCases.GetTopics;
 
-public record GetTopicsQuery(Guid ForumId, int Skip, int Take) : IRequest<(IEnumerable<Topic> resources, int totalCount)>, IMonitoredRequest
+public record GetTopicsQuery(Guid ForumId, int Skip, int Take) : IRequest<TopicsPagedResult>, IMonitoredRequest
 {
     private const string CounterName = "topics.fetched";
     

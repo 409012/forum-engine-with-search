@@ -1,6 +1,6 @@
 ﻿namespace FEwS.Forums.Storage.Models;
 
-internal class TopicListItemReadModel
+internal class TopicReadModel
 {
     public Guid TopicId { get; set; }
     public Guid ForumId { get; set; }

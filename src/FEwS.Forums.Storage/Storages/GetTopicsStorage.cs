@@ -3,7 +3,6 @@ using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using FEwS.Forums.Domain.Models;
 using FEwS.Forums.Domain.UseCases.GetTopics;
-using FEwS.Forums.Storage.Models;
 
 namespace FEwS.Forums.Storage.Storages;
 
@@ -11,14 +10,14 @@ internal class GetTopicsStorage(
     ForumDbContext dbContext,
     IMapper mapper) : IGetTopicsStorage
 {
-    public async Task<(IEnumerable<Topic> resources, int totalCount)> GetTopicsAsync(
+    public async Task<TopicsPagedResult> GetTopicsAsync(
         Guid forumId, int skip, int take, CancellationToken cancellationToken)
     {
         var query = dbContext.Topics.Where(t => t.ForumId == forumId);
 
         var totalCount = await query.CountAsync(cancellationToken);
 
-        var resources = await dbContext.Database.SqlQuery<TopicListItemReadModel>($@"
+        var resources = await dbContext.Database.SqlQuery<Models.TopicReadModel>($@"
             SELECT
                 t.""TopicId"" as ""TopicId"",
                 t.""ForumId"" as ""ForumId"",
@@ -42,9 +41,9 @@ internal class GetTopicsStorage(
             ORDER BY
                 COALESCE(c.""CreatedAt"", t.""CreatedAt"") DESC
             LIMIT {take} OFFSET {skip}")
-            .ProjectTo<Topic>(mapper.ConfigurationProvider)
+            .ProjectTo<TopicReadModel>(mapper.ConfigurationProvider)
             .ToArrayAsync(cancellationToken);
 
-        return (resources, totalCount);
+        return new TopicsPagedResult(resources, totalCount);
     }
 }

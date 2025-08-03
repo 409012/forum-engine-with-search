@@ -4,6 +4,6 @@ namespace FEwS.Forums.Domain.UseCases.GetTopics;
 
 public interface IGetTopicsStorage
 {
-    Task<(IEnumerable<Topic> resources, int totalCount)> GetTopicsAsync(
+    Task<TopicsPagedResult> GetTopicsAsync(
         Guid forumId, int skip, int take, CancellationToken cancellationToken);
 }
