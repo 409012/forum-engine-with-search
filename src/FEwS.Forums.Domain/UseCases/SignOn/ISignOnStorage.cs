@@ -2,5 +2,5 @@
 
 public interface ISignOnStorage
 {
-    Task<Guid> CreateUserAsync(string login, byte[] salt, byte[] hash, CancellationToken cancellationToken);
+    Task<Guid> CreateUserAsync(string login, string passwordHash, CancellationToken cancellationToken);
 }

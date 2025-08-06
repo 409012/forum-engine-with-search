@@ -9,7 +9,9 @@ internal class ApiProfile : Profile
     {
         CreateMap<Forum, Models.Forum>();
         CreateMap<Topic, Models.Topic>();
-        CreateMap<Comment, Models.Comment>();
+        CreateMap<Comment, Models.Comment>()
+            .ForMember(d => d.AuthorLogin, s 
+                => s.MapFrom(c => c.AuthorUserName));
         CreateMap<TopicTopicReadModelComment, Models.TopicTopicReadModelComment>();
         CreateMap<TopicReadModel, Models.TopicReadModel>();
         CreateMap<TopicsPagedResult, Models.TopicsPagedResult>();

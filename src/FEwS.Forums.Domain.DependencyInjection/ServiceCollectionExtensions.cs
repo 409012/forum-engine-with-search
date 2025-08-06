@@ -5,6 +5,8 @@ using FEwS.Forums.Domain.Authorization;
 using FEwS.Forums.Domain.Authorization.AccessManagement;
 using FEwS.Forums.Domain.Models;
 using FEwS.Forums.Domain.Monitoring;
+using Microsoft.AspNetCore.Identity;
+using User = FEwS.Forums.Domain.Authentication.User;
 
 namespace FEwS.Forums.Domain.DependencyInjection;
 
@@ -25,11 +27,12 @@ public static class ServiceCollectionExtensions
         services
             .AddScoped<IIntentionManager, IntentionManager>()
             .AddScoped<IIdentityProvider, IdentityProvider>()
-            .AddScoped<IPasswordManager, PasswordManager>()
             .AddScoped<IAuthenticationService, AuthenticationService>()
             .AddScoped<ISymmetricDecryptor, AesSymmetricEncryptorDecryptor>()
             .AddScoped<ISymmetricEncryptor, AesSymmetricEncryptorDecryptor>();
-
+        
+        services.AddScoped<IPasswordHasher<Models.User>, PasswordHasher<Models.User>>();
+        
         services.AddValidatorsFromAssemblyContaining<Forum>(includeInternalTypes: true);
 
         services.AddSingleton<DomainMetrics>();

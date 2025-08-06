@@ -1,18 +1,21 @@
 ﻿using FEwS.Forums.Domain.Authentication;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using User = FEwS.Forums.Domain.Models.User;
 
 namespace FEwS.Forums.Domain.UseCases.SignOn;
 
 internal class SignOnUseCase(
-    IPasswordManager passwordManager,
+    IPasswordHasher<User> passwordHasher,
     ISignOnStorage storage)
     : IRequestHandler<SignOnCommand, IIdentity>
 {
     public async Task<IIdentity> Handle(SignOnCommand command, CancellationToken cancellationToken)
     {
-        var (salt, hash) = passwordManager.GeneratePasswordParts(command.Password);
-        var userId = await storage.CreateUserAsync(command.Login, salt, hash, cancellationToken);
+        var user = new User();
+        var passwordHash = passwordHasher.HashPassword(user, command.Password);
+        var userId = await storage.CreateUserAsync(command.Login, passwordHash, cancellationToken);
 
-        return new User(userId, Guid.Empty);
+        return new Authentication.User(userId, Guid.Empty);
     }
 }

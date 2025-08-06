@@ -9,6 +9,8 @@
     <ItemGroup>
       <PackageReference Include="FluentValidation" />
       <PackageReference Include="MediatR" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity" />
+      <PackageReference Include="Microsoft.Extensions.Identity.Core" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
       <PackageReference Include="Microsoft.Extensions.Options" />
       <PackageReference Include="System.Diagnostics.DiagnosticSource" />

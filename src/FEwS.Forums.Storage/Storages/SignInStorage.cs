@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FEwS.Forums.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using FEwS.Forums.Domain.UseCases.SignIn;
 using FEwS.Forums.Storage.Entities;
+using Microsoft.AspNetCore.Identity;
+using User = FEwS.Forums.Domain.Models.User;
 
 namespace FEwS.Forums.Storage.Storages;
 
@@ -12,9 +15,9 @@ internal class SignInStorage(
     IMapper mapper)
     : ISignInStorage
 {
-    public Task<RecognisedUser?> FindUserAsync(string login, CancellationToken cancellationToken) => dbContext.Users
-        .Where(u => u.Login.Equals(login))
-        .ProjectTo<RecognisedUser>(mapper.ConfigurationProvider)
+    public Task<User?> FindUserAsync(string login, CancellationToken cancellationToken) => dbContext.Users
+        .Where(u => u.UserName!.Equals(login))
+        .ProjectTo<User>(mapper.ConfigurationProvider)
         .FirstOrDefaultAsync(cancellationToken);
 
     public async Task<Guid> CreateSessionAsync(

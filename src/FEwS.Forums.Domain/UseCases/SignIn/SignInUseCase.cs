@@ -3,13 +3,14 @@ using FEwS.Forums.Domain.Exceptions;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity;
+using User = FEwS.Forums.Domain.Models.User;
 
 namespace FEwS.Forums.Domain.UseCases.SignIn;
 
 internal class SignInUseCase(
     ISignInStorage storage,
-    IPasswordManager passwordManager,
+    IPasswordHasher<User> passwordHasher,
     ISymmetricEncryptor encryptor)
     : IRequestHandler<SignInCommand, (IIdentity identity, string token)>
 {
@@ -28,9 +29,10 @@ internal class SignInUseCase(
                 }
             ]);
         }
-
-        var passwordMatches = passwordManager.ComparePasswords(
-            command.Password, recognisedUser.Salt, recognisedUser.PasswordHash);
+        var passwordVerificationResult = passwordHasher
+            .VerifyHashedPassword(recognisedUser, recognisedUser.PasswordHash, command.Password);
+        var passwordMatches = passwordVerificationResult 
+                              == PasswordVerificationResult.Success;;
         if (!passwordMatches)
         {
             throw new ValidationException([
@@ -46,6 +48,6 @@ internal class SignInUseCase(
         var sessionId = await storage.CreateSessionAsync(
             recognisedUser.UserId, DateTimeOffset.UtcNow + TimeSpan.FromHours(1), cancellationToken);
         var token = await encryptor.EncryptAsync(sessionId.ToString(), cancellationToken);
-        return (new User(recognisedUser.UserId, sessionId), token);
+        return (new Authentication.User(recognisedUser.UserId, sessionId), token);
     }
 }
