@@ -4,7 +4,7 @@ namespace FEwS.Forums.Domain.UseCases.SignIn;
 
 public interface ISignInStorage
 {
-    Task<User?> FindUserAsync(string login, CancellationToken cancellationToken);
+    Task<User?> FindUserAsync(string userName, CancellationToken cancellationToken);
 
     Task<Guid> CreateSessionAsync(Guid userId, DateTimeOffset expirationMoment, CancellationToken cancellationToken);
 }

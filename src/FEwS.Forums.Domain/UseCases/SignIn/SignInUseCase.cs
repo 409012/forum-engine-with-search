@@ -17,15 +17,15 @@ internal class SignInUseCase(
     public async Task<(IIdentity identity, string token)> Handle(
         SignInCommand command, CancellationToken cancellationToken)
     {
-        var recognisedUser = await storage.FindUserAsync(command.Login, cancellationToken);
+        var recognisedUser = await storage.FindUserAsync(command.UserName, cancellationToken);
         if (recognisedUser is null)
         {
             throw new ValidationException([
                 new ValidationFailure
                 {
-                    PropertyName = nameof(command.Login),
+                    PropertyName = nameof(command.UserName),
                     ErrorCode = ValidationErrorCode.Invalid,
-                    AttemptedValue = command.Login
+                    AttemptedValue = command.UserName
                 }
             ]);
         }

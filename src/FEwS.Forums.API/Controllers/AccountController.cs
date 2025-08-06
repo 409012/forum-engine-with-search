@@ -16,7 +16,7 @@ public class AccountController(ISender mediator) : ControllerBase
         [FromBody] SignOn request,
         CancellationToken cancellationToken)
     {
-        var identity = await mediator.Send(new SignOnCommand(request.Login, request.Password), cancellationToken);
+        var identity = await mediator.Send(new SignOnCommand(request.UserName, request.Password), cancellationToken);
         return Ok(identity);
     }
 
@@ -27,7 +27,7 @@ public class AccountController(ISender mediator) : ControllerBase
         CancellationToken cancellationToken)
     {
         var (identity, token) = await mediator.Send(
-            new SignInCommand(request.Login, request.Password), cancellationToken);
+            new SignInCommand(request.UserName, request.Password), cancellationToken);
         tokenStorage.Store(HttpContext, token);
         return Ok(identity);
     }

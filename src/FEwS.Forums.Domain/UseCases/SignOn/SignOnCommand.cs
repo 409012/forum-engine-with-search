@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FEwS.Forums.Domain.UseCases.SignOn;
 
-public record SignOnCommand(string Login, string Password) : IRequest<IIdentity>, IMonitoredRequest
+public record SignOnCommand(string UserName, string Password) : IRequest<IIdentity>, IMonitoredRequest
 {
     private const string CounterName = "account.signedon";
     

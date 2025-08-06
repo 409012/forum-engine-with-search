@@ -14,7 +14,7 @@ internal class SignOnUseCase(
     {
         var user = new User();
         var passwordHash = passwordHasher.HashPassword(user, command.Password);
-        var userId = await storage.CreateUserAsync(command.Login, passwordHash, cancellationToken);
+        var userId = await storage.CreateUserAsync(command.UserName, passwordHash, cancellationToken);
 
         return new Authentication.User(userId, Guid.Empty);
     }

@@ -15,8 +15,8 @@ internal class SignInStorage(
     IMapper mapper)
     : ISignInStorage
 {
-    public Task<User?> FindUserAsync(string login, CancellationToken cancellationToken) => dbContext.Users
-        .Where(u => u.UserName!.Equals(login))
+    public Task<User?> FindUserAsync(string userName, CancellationToken cancellationToken) => dbContext.Users
+        .Where(u => u.UserName!.Equals(userName))
         .ProjectTo<User>(mapper.ConfigurationProvider)
         .FirstOrDefaultAsync(cancellationToken);
 

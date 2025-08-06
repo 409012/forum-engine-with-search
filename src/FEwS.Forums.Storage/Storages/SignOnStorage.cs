@@ -8,13 +8,13 @@ internal class SignOnStorage(
     ForumDbContext dbContext,
     IGuidFactory guidFactory) : ISignOnStorage
 {
-    public async Task<Guid> CreateUserAsync(string login, string passwordHash, CancellationToken cancellationToken)
+    public async Task<Guid> CreateUserAsync(string userName, string passwordHash, CancellationToken cancellationToken)
     {
         var userId = guidFactory.Create();
         await dbContext.Users.AddAsync(new User
         {
             Id = userId,
-            UserName = login,
+            UserName = userName,
             PasswordHash = passwordHash
         }, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);

@@ -2,6 +2,6 @@
 
 public class SignOn
 {
-    public required string Login { get; set; }
+    public required string UserName { get; set; }
     public required string Password { get; set; }
 }
