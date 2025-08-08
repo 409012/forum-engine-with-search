@@ -16,12 +16,12 @@ public class AccountEndpointsShould(ForumApiApplicationFactory factory) : IClass
         using var httpClient = factory.CreateClient();
 
         using var signOnResponse = await httpClient.PostAsync(
-            "account", JsonContent.Create(new { login = "Test", password = "qwerty" }));
+            "account", JsonContent.Create(new { userName = "Test", password = "qwerty" }));
         signOnResponse.IsSuccessStatusCode.Should().BeTrue();
         var createdUser = await signOnResponse.Content.ReadFromJsonAsync<User>();
 
         using var signInResponse = await httpClient.PostAsync(
-            "account/signin", JsonContent.Create(new { login = "Test", password = "qwerty" }));
+            "account/signin", JsonContent.Create(new { userName = "Test", password = "qwerty" }));
         signInResponse.IsSuccessStatusCode.Should().BeTrue();
 
         var signedInUser = await signInResponse.Content.ReadFromJsonAsync<User>();

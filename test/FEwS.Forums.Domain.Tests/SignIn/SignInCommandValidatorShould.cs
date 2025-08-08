@@ -18,9 +18,9 @@ public class SignInCommandValidatorShould
     public static IEnumerable<object[]> GetInvalidCommands()
     {
         var command = new SignInCommand("Test", "qwerty");
-        yield return new object[] { command with { Login = string.Empty } };
-        yield return new object[] { command with { Login = "  " } };
-        yield return new object[] { command with { Login = "123456789012345678901" } };
+        yield return new object[] { command with { UserName = string.Empty } };
+        yield return new object[] { command with { UserName = "  " } };
+        yield return new object[] { command with { UserName = "123456789012345678901" } };
         yield return new object[] { command with { Password = "      " } };
         yield return new object[] { command with { Password = string.Empty } };
     }

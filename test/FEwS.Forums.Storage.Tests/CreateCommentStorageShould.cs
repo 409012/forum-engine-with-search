@@ -39,10 +39,9 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
             },
             Author = new User
             {
-                UserId = userId,
-                Login = "Test user",
-                Salt = [],
-                PasswordHash = []
+                Id = userId,
+                UserName = "Test user",
+                PasswordHash = string.Empty,
             },
             Title = "Test topic",
             CreatedAt = new DateTimeOffset(2024, 04, 25, 18, 40, 00, TimeSpan.Zero)
@@ -78,10 +77,9 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
             },
             Author = new User
             {
-                UserId = userId,
-                Login = "Test user",
-                Salt = [],
-                PasswordHash = []
+                Id = userId,
+                UserName = "Test user",
+                PasswordHash = string.Empty,
             },
             Title = "Test topic",
             CreatedAt = new DateTimeOffset(2024, 04, 25, 18, 40, 00, TimeSpan.Zero)
@@ -92,7 +90,7 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
         comment.Should().BeEquivalentTo(new Comment
         {
             Text = "Test comment",
-            AuthorLogin = "Test user"
+            AuthorUserName = "Test user"
         }, cfg => cfg.Excluding(c => c.Id).Excluding(c => c.CreatedAt));
     }
 }

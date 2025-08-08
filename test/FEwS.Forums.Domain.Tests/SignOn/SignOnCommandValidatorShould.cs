@@ -18,9 +18,9 @@ public class SignOnCommandValidatorShould
     public static IEnumerable<object[]> GetInvalidCommands()
     {
         var validCommand = new SignOnCommand("Test", "qwerty");
-        yield return new object[] { validCommand with { Login = string.Empty } };
-        yield return new object[] { validCommand with { Login = "123456789012345678901" } };
-        yield return new object[] { validCommand with { Login = "   " } };
+        yield return new object[] { validCommand with { UserName = string.Empty } };
+        yield return new object[] { validCommand with { UserName = "123456789012345678901" } };
+        yield return new object[] { validCommand with { UserName = "   " } };
         yield return new object[] { validCommand with { Password = string.Empty } };
         yield return new object[] { validCommand with { Password = "     " } };
     }
