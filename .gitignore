@@ -6,4 +6,5 @@ bundles
 *.user
 launchSettings.json
 .DS_Store
-
+.cz.toml
+.pre-commit-config.yaml
