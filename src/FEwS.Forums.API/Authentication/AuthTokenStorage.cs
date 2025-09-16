@@ -6,7 +6,7 @@ internal class AuthTokenStorage : IAuthTokenStorage
 
     public bool TryExtract(HttpContext httpContext, out string token)
     {
-        if (httpContext.Request.Cookies.TryGetValue(HeaderKey, out var value) &&
+        if (httpContext.Request.Cookies.TryGetValue(HeaderKey, out string? value) &&
             !string.IsNullOrWhiteSpace(value))
         {
             token = value;
@@ -17,6 +17,8 @@ internal class AuthTokenStorage : IAuthTokenStorage
         return false;
     }
 
-    public void Store(HttpContext httpContext, string token) =>
+    public void Store(HttpContext httpContext, string token)
+    {
         httpContext.Response.Cookies.Append(HeaderKey, token);
+    }
 }

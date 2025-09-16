@@ -15,7 +15,7 @@ internal class DomainEventStorage(
 {
     public async Task AddEventAsync(ForumDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        var storageDomainEvent = mapper.Map<Models.ForumDomainEvent>(domainEvent);
+        Models.ForumDomainEvent storageDomainEvent = mapper.Map<Models.ForumDomainEvent>(domainEvent);
 
         await dbContext.DomainEvents.AddAsync(new DomainEvent
         {

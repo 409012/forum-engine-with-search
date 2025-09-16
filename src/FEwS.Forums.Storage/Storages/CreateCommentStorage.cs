@@ -12,14 +12,17 @@ internal class CreateCommentStorage(
     IGuidFactory guidFactory,
     TimeProvider timeProvider) : ICreateCommentStorage
 {
-    public Task<Topic?> FindTopicAsync(Guid topicId, CancellationToken cancellationToken) => dbContext.Topics
-        .Where(t => t.TopicId == topicId)
-        .ProjectTo<Topic>(mapper.ConfigurationProvider)
-        .FirstOrDefaultAsync(cancellationToken);
+    public Task<Topic?> FindTopicAsync(Guid topicId, CancellationToken cancellationToken)
+    {
+        return dbContext.Topics
+            .Where(t => t.TopicId == topicId)
+            .ProjectTo<Topic>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 
     public async Task<Comment> CreateCommentAsync(Guid topicId, Guid userId, string text, CancellationToken cancellationToken)
     {
-        var commentId = guidFactory.Create();
+        Guid commentId = guidFactory.Create();
         await dbContext.Comments.AddAsync(new Entities.Comment
         {
             CommentId = commentId,

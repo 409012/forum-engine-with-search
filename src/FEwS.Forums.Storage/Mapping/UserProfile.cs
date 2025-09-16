@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using FEwS.Forums.Domain.Models;
-using FEwS.Forums.Domain.UseCases.SignIn;
 using FEwS.Forums.Storage.Entities;
 using User = FEwS.Forums.Domain.Models.User;
 

@@ -10,6 +10,6 @@ internal class ValidationPipelineBehavior<TRequest, TResponse>(IValidator<TReque
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         await validator.ValidateAndThrowAsync(request, cancellationToken);
-        return await next.Invoke();
+        return await next.Invoke(cancellationToken);
     }
 }

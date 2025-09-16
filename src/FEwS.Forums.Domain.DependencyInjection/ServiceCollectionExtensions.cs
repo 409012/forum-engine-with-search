@@ -6,7 +6,6 @@ using FEwS.Forums.Domain.Authorization.AccessManagement;
 using FEwS.Forums.Domain.Models;
 using FEwS.Forums.Domain.Monitoring;
 using Microsoft.AspNetCore.Identity;
-using User = FEwS.Forums.Domain.Authentication.User;
 
 namespace FEwS.Forums.Domain.DependencyInjection;
 

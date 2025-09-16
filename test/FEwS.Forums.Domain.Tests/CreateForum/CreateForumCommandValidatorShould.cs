@@ -17,9 +17,11 @@ public class CreateForumCommandValidatorShould
 
     public static IEnumerable<object[]> GetInvalidCommands()
     {
-        var validCommand = new CreateForumCommand("Title");
-        yield return new object[] { validCommand with { Title = string.Empty } };
-        yield return new object[] { validCommand with { Title = "123456789012345678901234567890123456789012345678901" } };
+        yield return [new CreateForumCommand(Title: string.Empty)];
+        yield return
+        [
+            new CreateForumCommand(Title: "123456789012345678901234567890123456789012345678901")
+        ];
     }
     
     [Theory]

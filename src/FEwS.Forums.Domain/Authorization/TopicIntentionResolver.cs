@@ -8,15 +8,23 @@ internal class TopicIntentionResolver :
     IIntentionResolver<TopicIntention>,
     IIntentionResolver<TopicIntention, Topic>
 {
-    public bool IsAllowed(IIdentity subject, TopicIntention intention) => intention switch
+    public bool IsAllowed(IIdentity subject, TopicIntention intention)
     {
-        TopicIntention.Create => subject.IsAuthenticated(),
-        _ => false
-    };
+        return intention switch
+        {
+            TopicIntention.Create => subject.IsAuthenticated(),
+            TopicIntention.CreateComment => throw new NotImplementedException(),
+            _ => false
+        };
+    }
 
-    public bool IsAllowed(IIdentity subject, TopicIntention intention, Topic target) => intention switch
+    public bool IsAllowed(IIdentity subject, TopicIntention intention, Topic target)
     {
-        TopicIntention.CreateComment => subject.IsAuthenticated(),
-        _ => false
-    };
+        return intention switch
+        {
+            TopicIntention.CreateComment => subject.IsAuthenticated(),
+            TopicIntention.Create => throw new NotImplementedException(),
+            _ => false
+        };
+    }
 }

@@ -15,11 +15,10 @@ public class IntentionManagerShould
     public void ReturnFalseWhenNoMatchingResolver()
     {
         var sut = new IntentionManager(
-            new IIntentionResolver[]
-            {
+            [
                 new Mock<IIntentionResolver<DomainErrorCode>>().Object,
                 new Mock<IIntentionResolver<HttpStatusCode>>().Object
-            },
+            ],
             new Mock<IIdentityProvider>().Object);
 
         sut.IsAllowed(ForumIntention.Create).Should().BeFalse();
@@ -41,7 +40,7 @@ public class IntentionManagerShould
             .Returns(new User(Guid.Parse("08B62CDE-F28F-462B-94E8-9E521F7218B4"), Guid.Empty));
 
         var sut = new IntentionManager(
-            new IIntentionResolver[] { resolver.Object },
+            [resolver.Object],
             identityProvider.Object);
 
         sut.IsAllowed(ForumIntention.Create).Should().Be(expected);

@@ -16,7 +16,7 @@ internal class CreateTopicStorage(
     public async Task<Topic> CreateTopicAsync(Guid forumId, Guid userId, string title,
         CancellationToken cancellationToken)
     {
-        var topicId = guidFactory.Create();
+        Guid topicId = guidFactory.Create();
         var topic = new Entities.Topic
         {
             TopicId = topicId,

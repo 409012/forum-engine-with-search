@@ -7,7 +7,7 @@ internal static class GetForumsStorageExtensions
     private static async Task<bool> ForumExists(this IGetForumsStorage storage, Guid forumId,
         CancellationToken cancellationToken)
     {
-        var forums = await storage.GetForumsAsync(cancellationToken);
+        IEnumerable<Models.Forum> forums = await storage.GetForumsAsync(cancellationToken);
         return forums.Any(f => f.Id == forumId);
     }
 

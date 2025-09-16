@@ -2,7 +2,6 @@
 using FEwS.Search.Domain.Models;
 using FEwS.Search.Domain.UseCases.Index;
 using Entities_SearchEntity = FEwS.Search.Storage.Entities.SearchEntity;
-using SearchEntity = FEwS.Search.Storage.Entities.SearchEntity;
 
 namespace FEwS.Search.Storage.Storages;
 

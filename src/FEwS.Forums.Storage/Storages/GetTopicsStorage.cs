@@ -13,11 +13,11 @@ internal class GetTopicsStorage(
     public async Task<TopicsPagedResult> GetTopicsAsync(
         Guid forumId, int skip, int take, CancellationToken cancellationToken)
     {
-        var query = dbContext.Topics.Where(t => t.ForumId == forumId);
+        IQueryable<Entities.Topic> query = dbContext.Topics.Where(t => t.ForumId == forumId);
 
-        var totalCount = await query.CountAsync(cancellationToken);
+        int totalCount = await query.CountAsync(cancellationToken);
 
-        var resources = await dbContext.Database.SqlQuery<Models.TopicReadModel>($@"
+        TopicReadModel[] resources = await dbContext.Database.SqlQuery<Models.TopicReadModel>($@"
             SELECT
                 t.""TopicId"" as ""TopicId"",
                 t.""ForumId"" as ""ForumId"",

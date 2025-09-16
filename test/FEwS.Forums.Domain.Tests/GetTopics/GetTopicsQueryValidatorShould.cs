@@ -21,9 +21,9 @@ public class GetTopicsQueryValidatorShould
     public static IEnumerable<object[]> GetInvalidQuery()
     {
         var query = new GetTopicsQuery(Guid.Parse("DA60E33E-7F32-4BFC-A4FF-E19F9BFE934B"), 10, 5);
-        yield return new object[] { query with { ForumId = Guid.Empty } };
-        yield return new object[] { query with { Skip = -40 } };
-        yield return new object[] { query with { Take = -1 } };
+        yield return [query with { ForumId = Guid.Empty }];
+        yield return [query with { Skip = -40 }];
+        yield return [query with { Take = -1 }];
     }
 
     [Theory]

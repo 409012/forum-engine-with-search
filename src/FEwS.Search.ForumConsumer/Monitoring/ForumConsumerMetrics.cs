@@ -2,8 +2,9 @@
 
 namespace FEwS.Search.ForumConsumer.Monitoring;
 
-public class Metrics
+public static class ForumConsumerMetrics
 {
-    public const string ApplicationName = "FEwS.Search.ForumConsumer";
+    public static string ApplicationName { get; set; } = "FEwS.Search.ForumConsumer";
+
     internal static readonly ActivitySource ActivitySource = new(ApplicationName);
 }

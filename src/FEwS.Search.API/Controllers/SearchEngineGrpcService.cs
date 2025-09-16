@@ -13,9 +13,11 @@ internal class SearchEngineGrpcService(IMediator mediator) : SearchEngine.Search
     {
         var command = new IndexCommand(
             Guid.Parse(request.Id),
-            request.Type switch {
+            request.Type switch
+            {
                 SearchEntityType.ForumTopic => Domain.Models.SearchEntityType.ForumTopic,
                 SearchEntityType.ForumComment => Domain.Models.SearchEntityType.ForumComment,
+                SearchEntityType.Unknown => throw new NotImplementedException(),
                 _ => throw new ArgumentOutOfRangeException(request.Type.ToString())
             },
             request.Title,
@@ -27,7 +29,7 @@ internal class SearchEngineGrpcService(IMediator mediator) : SearchEngine.Search
     public override async Task<SearchResponse> Search(SearchRequest request, ServerCallContext context)
     {
         var query = new SearchQuery(request.Query);
-        var (resources, totalCount) = await mediator.Send(query, context.CancellationToken);
+        (IEnumerable<Domain.Models.SearchResult> resources, int totalCount) = await mediator.Send(query, context.CancellationToken);
         return new SearchResponse
         {
             Total = totalCount,

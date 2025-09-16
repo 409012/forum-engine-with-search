@@ -11,13 +11,23 @@ public class StorageTestFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer dbContainer = new PostgreSqlBuilder().Build();
 
-    public ForumDbContext GetDbContext() => new(new DbContextOptionsBuilder<ForumDbContext>()
-        .UseNpgsql(dbContainer.GetConnectionString()).Options);
+    public ForumDbContext GetDbContext()
+    {
+        return new ForumDbContext(new DbContextOptionsBuilder<ForumDbContext>()
+            .UseNpgsql(dbContainer.GetConnectionString())
+            .Options);
+    }
 
-    public IMapper GetMapper() => new Mapper(new MapperConfiguration(cfg =>
-        cfg.AddMaps(Assembly.GetAssembly(typeof(ForumDbContext)))));
+    public IMapper GetMapper()
+    {
+        return new Mapper(new MapperConfiguration(cfg =>
+            cfg.AddMaps(Assembly.GetAssembly(typeof(ForumDbContext)))));
+    }
 
-    public IMemoryCache GetMemoryCache() => new MemoryCache(new MemoryCacheOptions());
+    public IMemoryCache GetMemoryCache()
+    {
+        return new MemoryCache(new MemoryCacheOptions());
+    }
 
     public virtual async Task InitializeAsync()
     {
@@ -27,5 +37,8 @@ public class StorageTestFixture : IAsyncLifetime
         await forumDbContext.Database.MigrateAsync();
     }
 
-    public async Task DisposeAsync() => await dbContainer.DisposeAsync();
+    public async Task DisposeAsync()
+    {
+        await dbContainer.DisposeAsync();
+    }
 }

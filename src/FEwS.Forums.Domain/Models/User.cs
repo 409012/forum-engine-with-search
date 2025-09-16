@@ -1,6 +1,4 @@
-﻿using System.Security.Principal;
-using Microsoft.AspNetCore.Identity;
-namespace FEwS.Forums.Domain.Models;
+﻿namespace FEwS.Forums.Domain.Models;
 
 public class User
 {
