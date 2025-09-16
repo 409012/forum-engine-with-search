@@ -22,5 +22,6 @@ public class Comment
     [ForeignKey(nameof(TopicId))]
     public Topic? Topic { get; init; }
 
+    [MaxLength(5000)]
     public required string Text { get; init; }
 }
