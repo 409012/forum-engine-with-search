@@ -9,6 +9,11 @@
     <PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="9.7.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="SourceKit.Analyzers.Collections" Version="1.0.50" />
+    <PackageVersion Include="SourceKit.Analyzers.Enumerable" Version="1.0.50" />
+    <PackageVersion Include="SourceKit.Analyzers.MemberAccessibility" Version="1.0.31" />
+    <PackageVersion Include="SourceKit.Analyzers.Nullable" Version="1.0.50" />
+    <PackageVersion Include="SourceKit.Analyzers.Properties" Version="1.0.50" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.6.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />

@@ -29,6 +29,11 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
     <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.6" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageVersion Include="SourceKit.Analyzers.Collections" Version="1.0.50" />
+    <PackageVersion Include="SourceKit.Analyzers.Enumerable" Version="1.0.50" />
+    <PackageVersion Include="SourceKit.Analyzers.MemberAccessibility" Version="1.0.31" />
+    <PackageVersion Include="SourceKit.Analyzers.Nullable" Version="1.0.50" />
+    <PackageVersion Include="SourceKit.Analyzers.Properties" Version="1.0.50" />
     <PackageVersion Include="OpenSearch.Client" Version="1.8.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
     <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.8.0-rc.1" />

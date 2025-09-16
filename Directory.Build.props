@@ -1,10 +1,14 @@
 <Project>
     <PropertyGroup>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-<!--        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
-<!--        <GenerateDocumentationFile>true</GenerateDocumentationFile>-->
+        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+        <AnalysisMode>All</AnalysisMode>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
     
     <ItemGroup>
@@ -17,5 +21,13 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
         </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SourceKit.Analyzers.Collections" />
+        <PackageReference Include="SourceKit.Analyzers.Enumerable" />
+        <PackageReference Include="SourceKit.Analyzers.MemberAccessibility" />
+        <PackageReference Include="SourceKit.Analyzers.Nullable" />
+        <PackageReference Include="SourceKit.Analyzers.Properties" />
     </ItemGroup>
 </Project>
