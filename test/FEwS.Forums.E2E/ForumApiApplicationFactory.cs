@@ -16,7 +16,7 @@ public class ForumApiApplicationFactory : WebApplicationFactory<Program>, IAsync
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        var configuration = new ConfigurationBuilder()
+        IConfigurationRoot configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:Postgres"] = dbContainer.GetConnectionString(),
@@ -36,5 +36,8 @@ public class ForumApiApplicationFactory : WebApplicationFactory<Program>, IAsync
         await forumDbContext.Database.MigrateAsync();
     }
 
-    public new async Task DisposeAsync() => await dbContainer.DisposeAsync();
+    public new async Task DisposeAsync()
+    {
+        await dbContainer.DisposeAsync();
+    }
 }

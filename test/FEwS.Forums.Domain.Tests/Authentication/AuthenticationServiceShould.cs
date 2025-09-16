@@ -41,7 +41,7 @@ public class AuthenticationServiceShould
     public async Task ReturnGuestIdentityWhenTokenCannotBeDecrypted()
     {
         setupDecrypt.Throws<CryptographicException>();
-        var actual = await sut.AuthenticateAsync("hahaha-bad-token", CancellationToken.None);
+        IIdentity actual = await sut.AuthenticateAsync("hahaha-bad-token", CancellationToken.None);
 
         actual.Should().BeEquivalentTo(User.Guest);
     }
@@ -50,7 +50,7 @@ public class AuthenticationServiceShould
     public async Task ReturnGuestIdentityWhenTokenIsInvalid()
     {
         setupDecrypt.ReturnsAsync("not-a-guid");
-        var actual = await sut.AuthenticateAsync("bad-token", CancellationToken.None);
+        IIdentity actual = await sut.AuthenticateAsync("bad-token", CancellationToken.None);
 
         actual.Should().BeEquivalentTo(User.Guest);
     }
@@ -61,7 +61,7 @@ public class AuthenticationServiceShould
         setupDecrypt.ReturnsAsync("EE88598F-5896-4885-BE61-9B31171EAB9E");
         findSessionSetup.ReturnsAsync(() => null);
 
-        var actual = await sut.AuthenticateAsync("good-token", CancellationToken.None);
+        IIdentity actual = await sut.AuthenticateAsync("good-token", CancellationToken.None);
         actual.Should().BeEquivalentTo(User.Guest);
     }
 
@@ -74,7 +74,7 @@ public class AuthenticationServiceShould
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(-1)
         });
 
-        var actual = await sut.AuthenticateAsync("good-token", CancellationToken.None);
+        IIdentity actual = await sut.AuthenticateAsync("good-token", CancellationToken.None);
         actual.Should().BeEquivalentTo(User.Guest);
     }
 
@@ -91,7 +91,7 @@ public class AuthenticationServiceShould
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(1)
         });
 
-        var actual = await sut.AuthenticateAsync("good-token", CancellationToken.None);
+        IIdentity actual = await sut.AuthenticateAsync("good-token", CancellationToken.None);
 
         actual.Should().BeEquivalentTo(new User(userId, sessionId));
     }

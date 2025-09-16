@@ -8,23 +8,29 @@ namespace FEwS.Forums.E2E;
 public class TopicEndpointsShould(ForumApiApplicationFactory factory)
     : IClassFixture<ForumApiApplicationFactory>, IAsyncLifetime
 {
-    public Task InitializeAsync() => Task.CompletedTask;
+    public Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public Task DisposeAsync()
+    {
+        return Task.CompletedTask;
+    }
 
     // [Fact]
     public async Task ReturnForbiddenWhenNotAuthenticated()
     {
-        using var httpClient = factory.CreateClient();
+        using HttpClient httpClient = factory.CreateClient();
 
-        using var forumCreatedResponse = await httpClient.PostAsync("forums",
+        using HttpResponseMessage forumCreatedResponse = await httpClient.PostAsync("forums",
             JsonContent.Create(new { title = "Test forum" }));
         forumCreatedResponse.EnsureSuccessStatusCode();
 
-        var createdForum = await forumCreatedResponse.Content.ReadFromJsonAsync<FEwS.Forums.API.Models.Forum>();
+        API.Models.Forum? createdForum = await forumCreatedResponse.Content.ReadFromJsonAsync<API.Models.Forum>();
         createdForum.Should().NotBeNull();
 
-        var responseMessage = await httpClient.PostAsync($"forums/{createdForum!.Id}/topics",
+        HttpResponseMessage responseMessage = await httpClient.PostAsync($"forums/{createdForum.Id}/topics",
             JsonContent.Create(new { title = "Hello world" }));
         responseMessage.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
     }

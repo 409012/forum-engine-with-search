@@ -31,7 +31,7 @@ public class GetForumsUseCaseShould
         };
         getForumsSetup.ReturnsAsync(forums);
 
-        var actual = await sut.Handle(new GetForumsQuery(), CancellationToken.None);
+        IEnumerable<Forum> actual = await sut.Handle(new GetForumsQuery(), CancellationToken.None);
         actual.Should().BeSameAs(forums);
         storage.Verify(s => s.GetForumsAsync(CancellationToken.None), Times.Once);
         storage.VerifyNoOtherCalls();

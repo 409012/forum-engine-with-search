@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
 using Moq.Language.Flow;
-using FEwS.Forums.Domain.Authentication;
 using FEwS.Forums.Domain.UseCases.SignOn;
 using Microsoft.AspNetCore.Identity;
 using Xunit;
@@ -31,7 +30,7 @@ public class SignOnUseCaseShould
     [Fact]
     public async Task CreateUserWithGeneratedPasswordParts()
     {
-        var hash = "2";
+        string hash = "2";
         generatePasswordHash.Returns(hash);
 
         await sut.Handle(new SignOnCommand("Test", "qwerty"), CancellationToken.None);
@@ -46,7 +45,7 @@ public class SignOnUseCaseShould
         generatePasswordHash.Returns("2");
         createUserSetup.ReturnsAsync(Guid.Parse("7483221E-FE0E-44EE-85B6-94D5279A8988"));
 
-        var actual = await sut.Handle(new SignOnCommand("Test", "qwerty"), CancellationToken.None);
+        Domain.Authentication.IIdentity actual = await sut.Handle(new SignOnCommand("Test", "qwerty"), CancellationToken.None);
         actual.UserId.Should().Be(Guid.Parse("7483221E-FE0E-44EE-85B6-94D5279A8988"));
     }
 }

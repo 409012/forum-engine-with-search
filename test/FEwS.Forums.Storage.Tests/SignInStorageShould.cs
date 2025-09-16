@@ -12,7 +12,7 @@ public class SignInStorageFixture : StorageTestFixture
     {
         await base.InitializeAsync();
 
-        await using var dbContext = GetDbContext();
+        await using ForumDbContext dbContext = GetDbContext();
         await dbContext.Users.AddRangeAsync(new User
         {
             Id = Guid.Parse("8B41C23E-123E-4F4A-93F0-BEBF9916C8B3"),
@@ -38,7 +38,7 @@ public class SignInStorageShould(SignInStorageFixture fixture) : IClassFixture<S
     [Fact]
     public async Task ReturnUserWhenDatabaseContainsUserWithSameUserName()
     {
-        var actual = await sut.FindUserAsync("testUser", CancellationToken.None);
+        Domain.Models.User? actual = await sut.FindUserAsync("testUser", CancellationToken.None);
         actual.Should().NotBeNull();
         actual.UserId.Should().Be(Guid.Parse("8B41C23E-123E-4F4A-93F0-BEBF9916C8B3"));
     }
@@ -46,19 +46,19 @@ public class SignInStorageShould(SignInStorageFixture fixture) : IClassFixture<S
     [Fact]
     public async Task ReturnNullWhenDatabaseDoesntContainUserWithSameUserName()
     {
-        var actual = await sut.FindUserAsync("whatever", CancellationToken.None);
+        Domain.Models.User? actual = await sut.FindUserAsync("whatever", CancellationToken.None);
         actual.Should().BeNull();
     }
 
     [Fact]
     public async Task ReturnNewlyCreatedSessionId()
     {
-        var sessionId = await sut.CreateSessionAsync(
+        Guid sessionId = await sut.CreateSessionAsync(
             Guid.Parse("8B41C23E-123E-4F4A-93F0-BEBF9916C8B3"),
             new DateTimeOffset(2023, 10, 12, 19, 25, 00, TimeSpan.Zero),
             CancellationToken.None);
 
-        await using var dbContext = fixture.GetDbContext();
+        await using ForumDbContext dbContext = fixture.GetDbContext();
         (await dbContext.Sessions
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.SessionId == sessionId)).Should().NotBeNull();

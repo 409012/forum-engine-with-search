@@ -13,31 +13,32 @@ public class AccountEndpointsShould(ForumApiApplicationFactory factory) : IClass
     [Fact]
     public async Task SignInAfterSignOn()
     {
-        using var httpClient = factory.CreateClient();
+        using HttpClient httpClient = factory.CreateClient();
 
-        using var signOnResponse = await httpClient.PostAsync(
+        using HttpResponseMessage signOnResponse = await httpClient.PostAsync(
             "account", JsonContent.Create(new { userName = "Test", password = "qwerty" }));
         signOnResponse.IsSuccessStatusCode.Should().BeTrue();
-        var createdUser = await signOnResponse.Content.ReadFromJsonAsync<User>();
+        User? createdUser = await signOnResponse.Content.ReadFromJsonAsync<User>();
 
-        using var signInResponse = await httpClient.PostAsync(
+        using HttpResponseMessage signInResponse = await httpClient.PostAsync(
             "account/signin", JsonContent.Create(new { userName = "Test", password = "qwerty" }));
         signInResponse.IsSuccessStatusCode.Should().BeTrue();
 
-        var signedInUser = await signInResponse.Content.ReadFromJsonAsync<User>();
-        signedInUser!.UserId.Should().Be(createdUser!.UserId);
+        User? signedInUser = await signInResponse.Content.ReadFromJsonAsync<User>();
+        createdUser.Should().NotBeNull();
+        signedInUser?.UserId.Should().Be(createdUser.UserId);
 
-        var createForumResponse = await httpClient.PostAsync(
+        HttpResponseMessage createForumResponse = await httpClient.PostAsync(
             "forums", JsonContent.Create(new { title = "Test title" }));
         createForumResponse.IsSuccessStatusCode.Should().BeTrue();
-        var forum = (await createForumResponse.Content.ReadFromJsonAsync<FEwS.Forums.API.Models.Forum>())!;
+        API.Models.Forum forum = await createForumResponse.Content.ReadFromJsonAsync<API.Models.Forum>() ?? throw new InvalidOperationException();
 
-        var createTopicResponse = await httpClient.PostAsync(
+        HttpResponseMessage createTopicResponse = await httpClient.PostAsync(
             $"forums/{forum.Id}/topics", JsonContent.Create(new { title = "New topic" }));
         createTopicResponse.IsSuccessStatusCode.Should().BeTrue();
 
-        await using var scope = factory.Services.CreateAsyncScope();
-        var domainEvents = await scope.ServiceProvider.GetRequiredService<ForumDbContext>()
+        await using AsyncServiceScope scope = factory.Services.CreateAsyncScope();
+        Storage.Entities.DomainEvent[] domainEvents = await scope.ServiceProvider.GetRequiredService<ForumDbContext>()
             .DomainEvents.ToArrayAsync();
         domainEvents.Should().HaveCount(1);
     }

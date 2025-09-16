@@ -38,7 +38,7 @@ public class CreateForumUseCaseShould
         };
         createForumSetup.ReturnsAsync(forum);
 
-        var actual = await sut.Handle(new CreateForumCommand("Hello"), CancellationToken.None);
+        Forum actual = await sut.Handle(new CreateForumCommand("Hello"), CancellationToken.None);
         actual.Should().Be(forum);
 
         storage.Verify(s => s.CreateForumAsync("Hello", It.IsAny<CancellationToken>()), Times.Once);

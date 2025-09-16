@@ -12,7 +12,7 @@ public class MapperConfigurationShould(WebApplicationFactory<Program> factory)
     [Fact]
     public void BeValid()
     {
-        var configurationProvider = factory.Services.GetRequiredService<IMapper>().ConfigurationProvider;
+        IConfigurationProvider configurationProvider = factory.Services.GetRequiredService<IMapper>().ConfigurationProvider;
         configurationProvider.Invoking(p => p.AssertConfigurationIsValid()).Should().NotThrow();
     }
 }

@@ -65,10 +65,10 @@ public class GetTopicsUseCaseShould
                 TotalCommentsCount = 0
             }
         };
-        var expectedTotalCount = 6;
+        int expectedTotalCount = 6;
         getTopicsSetup.ReturnsAsync(new TopicsPagedResult(expectedResources, expectedTotalCount));
 
-        var (actualResources, actualTotalCount) = await sut.Handle(
+        (IEnumerable<TopicReadModel> actualResources, int actualTotalCount) = await sut.Handle(
             new GetTopicsQuery(forumId, 5, 10), CancellationToken.None);
 
         actualResources.Should().BeEquivalentTo(expectedResources);

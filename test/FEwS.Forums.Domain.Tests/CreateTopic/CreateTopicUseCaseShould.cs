@@ -89,7 +89,7 @@ public class CreateTopicUseCaseShould
         var expected = new Topic{ Title = "Hello world" };
         createTopicSetup.ReturnsAsync(expected);
 
-        var actual = await sut.Handle(new CreateTopicCommand(forumId, "Hello world"), CancellationToken.None);
+        Topic actual = await sut.Handle(new CreateTopicCommand(forumId, "Hello world"), CancellationToken.None);
         actual.Should().Be(expected);
 
         storage.Verify(s => s.CreateTopicAsync(forumId, userId, "Hello world", It.IsAny<CancellationToken>()), Times.Once);

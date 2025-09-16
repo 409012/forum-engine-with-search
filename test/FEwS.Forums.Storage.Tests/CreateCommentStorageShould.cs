@@ -17,7 +17,7 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
     {
         var topicId = Guid.Parse("8280601A-7743-4A05-AEA9-25EE9D9C66B7");
 
-        var actual = await sut.FindTopicAsync(topicId, CancellationToken.None);
+        Domain.Models.Topic? actual = await sut.FindTopicAsync(topicId, CancellationToken.None);
         actual.Should().BeNull();
     }
 
@@ -28,7 +28,7 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
         var forumId = Guid.Parse("970E824F-70F5-408D-B540-49F76769BB6A");
         var userId = Guid.Parse("6FE88E07-964A-4EC1-8131-143639F7E57D");
 
-        await using var dbContext = fixture.GetDbContext();
+        await using ForumDbContext dbContext = fixture.GetDbContext();
         await dbContext.Topics.AddAsync(new Topic
         {
             TopicId = topicId,
@@ -48,7 +48,7 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
         }, CancellationToken.None);
         await dbContext.SaveChangesAsync();
 
-        var actual = await sut.FindTopicAsync(topicId, CancellationToken.None);
+        Domain.Models.Topic? actual = await sut.FindTopicAsync(topicId, CancellationToken.None);
         actual.Should().BeEquivalentTo(new Domain.Models.Topic
         {
             Id = topicId,
@@ -60,13 +60,13 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
     }
 
     [Fact]
-    public async Task ReturnNewlyCreatedComment_WhenCreating()
+    public async Task ReturnNewlyCreatedCommentWhenCreating()
     {
         var topicId = Guid.Parse("859C8234-A0A3-4E9C-88C3-DA07F67E21C4");
         var forumId = Guid.Parse("FBACDD59-BD9D-477F-BD80-F5A5AAF813D0");
         var userId = Guid.Parse("E14BF9CF-5292-422E-B52F-EC5A08C8FE92");
 
-        await using var dbContext = fixture.GetDbContext();
+        await using ForumDbContext dbContext = fixture.GetDbContext();
         await dbContext.Topics.AddAsync(new Topic
         {
             TopicId = topicId,
@@ -86,7 +86,7 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
         }, CancellationToken.None);
         await dbContext.SaveChangesAsync();
 
-        var comment = await sut.CreateCommentAsync(topicId, userId, "Test comment", CancellationToken.None);
+        Comment comment = await sut.CreateCommentAsync(topicId, userId, "Test comment", CancellationToken.None);
         comment.Should().BeEquivalentTo(new Comment
         {
             Text = "Test comment",

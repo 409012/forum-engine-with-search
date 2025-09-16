@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Language.Flow;
 using FEwS.Forums.Domain.Authentication;
-using FEwS.Forums.Domain.Models;
 using FEwS.Forums.Domain.UseCases.SignIn;
 using Microsoft.AspNetCore.Identity;
 using Xunit;
@@ -101,7 +100,7 @@ public class SignInUseCaseShould
         createSessionSetup.ReturnsAsync(sessionId);
         encryptSetup.ReturnsAsync("token");
 
-        var (identity, token) = await sut.Handle(new SignInCommand("Test", "qwerty"), CancellationToken.None);
+        (IIdentity identity, string token) = await sut.Handle(new SignInCommand("Test", "qwerty"), CancellationToken.None);
         token.Should().NotBeEmpty();
         identity.UserId.Should().Be(userId);
         identity.SessionId.Should().Be(sessionId);

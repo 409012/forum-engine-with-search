@@ -13,11 +13,11 @@ public class CreateForumStorageShould(StorageTestFixture fixture) : IClassFixtur
     [Fact]
     public async Task InsertNewForumInDatabase()
     {
-        var forum = await sut.CreateForumAsync("Test title", CancellationToken.None);
+        Domain.Models.Forum forum = await sut.CreateForumAsync("Test title", CancellationToken.None);
         forum.Id.Should().NotBeEmpty();
 
-        await using var dbContext = fixture.GetDbContext();
-        var forumTitles = await dbContext.Forums
+        await using ForumDbContext dbContext = fixture.GetDbContext();
+        string[] forumTitles = await dbContext.Forums
             .Where(f => f.ForumId == forum.Id)
             .Select(f => f.Title).ToArrayAsync();
 
