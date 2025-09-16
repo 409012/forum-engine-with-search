@@ -12,34 +12,40 @@ public class ForumDomainEvent
 
     public Guid TopicId { get; init; }
 
-    public string Title { get; init; } = null!;
+    public string? Title { get; init; }
     
     public ForumComment? Comment { get; init; }
 
     public class ForumComment
     {
         public Guid CommentId { get; init; }
-        public string Text { get; init; } = null!;
+        public string? Text { get; init; }
     }
 
-    public static ForumDomainEvent TopicCreated(Topic topic) => new()
+    public static ForumDomainEvent TopicCreated(Topic topic)
     {
-        EventType = ForumDomainEventType.TopicCreated,
-        TopicId = topic.Id,
-        Title = topic.Title
-    };
-
-    public static ForumDomainEvent CommentCreated(Topic topic, Comment comment) => new()
-    {
-        EventType = ForumDomainEventType.CommentCreated,
-        TopicId = topic.Id,
-        Title = topic.Title,
-        Comment = new ForumComment
+        return new ForumDomainEvent
         {
-            CommentId = comment.Id,
-            Text = comment.Text
-        }
-    };
+            EventType = ForumDomainEventType.TopicCreated,
+            TopicId = topic.Id,
+            Title = topic.Title
+        };
+    }
+
+    public static ForumDomainEvent CommentCreated(Topic topic, Comment comment)
+    {
+        return new ForumDomainEvent
+        {
+            EventType = ForumDomainEventType.CommentCreated,
+            TopicId = topic.Id,
+            Title = topic.Title,
+            Comment = new ForumComment
+            {
+                CommentId = comment.Id,
+                Text = comment.Text
+            }
+        };
+    }
 }
 
 public enum ForumDomainEventType

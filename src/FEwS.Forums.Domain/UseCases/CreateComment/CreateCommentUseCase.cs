@@ -16,10 +16,10 @@ internal class CreateCommentUseCase(
 {
     public async Task<Comment> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
     {
-        await using var scope = await unitOfWork.StartScope(cancellationToken);
-        var storage = scope.GetStorage<ICreateCommentStorage>();
+        await using IUnitOfWorkScope scope = await unitOfWork.StartScope(cancellationToken);
+        ICreateCommentStorage storage = scope.GetStorage<ICreateCommentStorage>();
 
-        var topic = await storage.FindTopicAsync(request.TopicId, cancellationToken);
+        Topic? topic = await storage.FindTopicAsync(request.TopicId, cancellationToken);
         if (topic is null)
         {
             throw new TopicNotFoundException(request.TopicId);
@@ -27,8 +27,8 @@ internal class CreateCommentUseCase(
 
         intentionManager.ThrowIfForbidden(TopicIntention.CreateComment, topic);
 
-        var domainEventsStorage = scope.GetStorage<IDomainEventStorage>();
-        var comment = await storage.CreateCommentAsync(
+        IDomainEventStorage domainEventsStorage = scope.GetStorage<IDomainEventStorage>();
+        Comment comment = await storage.CreateCommentAsync(
             request.TopicId, identityProvider.Current.UserId, request.Text, cancellationToken);
         await domainEventsStorage.AddEventAsync(ForumDomainEvent.CommentCreated(topic, comment), cancellationToken);
 

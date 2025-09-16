@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace FEwS.Forums.Domain.Authentication;
 
@@ -26,12 +25,12 @@ internal class AuthenticationService(
             return User.Guest;
         }
 
-        if (!Guid.TryParse(sessionIdString, out var sessionId))
+        if (!Guid.TryParse(sessionIdString, out Guid sessionId))
         {
             return User.Guest;
         }
 
-        var session = await storage.FindSessionAsync(sessionId, cancellationToken);
+        Session? session = await storage.FindSessionAsync(sessionId, cancellationToken);
         if (session is null)
         {
             return User.Guest;

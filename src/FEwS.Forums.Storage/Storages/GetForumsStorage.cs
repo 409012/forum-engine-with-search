@@ -13,8 +13,9 @@ internal class GetForumsStorage(
     IMapper mapper)
     : IGetForumsStorage
 {
-    public async Task<IEnumerable<Forum>> GetForumsAsync(CancellationToken cancellationToken) =>
-        (await memoryCache.GetOrCreateAsync<Forum[]>(
+    public async Task<IEnumerable<Forum>> GetForumsAsync(CancellationToken cancellationToken)
+    {
+        return await memoryCache.GetOrCreateAsync<Forum[]>(
             nameof(GetForumsAsync),
             entry =>
             {
@@ -22,5 +23,6 @@ internal class GetForumsStorage(
                 return dbContext.Forums
                     .ProjectTo<Forum>(mapper.ConfigurationProvider)
                     .ToArrayAsync(cancellationToken);
-            }))!;
+            }) ?? throw new InvalidOperationException();
+    }
 }
