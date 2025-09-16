@@ -2,7 +2,7 @@
 
 public class DomainEventWrapper
 {
-    public string ContentBlob { get; set; } = null!;
+    public required string ContentBlob { get; set; }
 }
 
 public class ForumDomainEvent
@@ -11,14 +11,14 @@ public class ForumDomainEvent
 
     public Guid TopicId { get; set; }
 
-    public string Title { get; set; } = null!;
+    public string? Title { get; set; }
     
     public ForumComment? Comment { get; set; }
 
     public class ForumComment
     {
         public Guid CommentId { get; set; }
-        public string Text { get; set; } = null!;
+        public string? Text { get; set; }
     }
 }
 

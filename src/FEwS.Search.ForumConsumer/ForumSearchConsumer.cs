@@ -2,9 +2,9 @@
 using System.Text;
 using System.Text.Json;
 using Confluent.Kafka;
-using FEwS.Search.ForumConsumer.Monitoring;
 using Microsoft.Extensions.Options;
 using FEwS.Search.API.Grpc;
+using FEwS.Search.ForumConsumer.Monitoring;
 
 namespace FEwS.Search.ForumConsumer;
 
@@ -23,27 +23,27 @@ internal class ForumSearchConsumer(
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            var consumeResult = consumer.Consume(stoppingToken);
+            ConsumeResult<byte[], byte[]> consumeResult = consumer.Consume(stoppingToken);
             if (consumeResult is not { IsPartitionEOF: false })
             {
                 await Task.Delay(300, stoppingToken);
                 continue;
             }
 
-            var activityId = consumeResult.Message.Headers.TryGetLastBytes("activity_id", out var lastBytes)
+            string? activityId = consumeResult.Message.Headers.TryGetLastBytes("activity_id", out byte[]? lastBytes)
                 ? Encoding.UTF8.GetString(lastBytes)
                 : null;
         
-            using var activity = Metrics.ActivitySource.StartActivity("consumer", ActivityKind.Consumer,
-                ActivityContext.TryParse(activityId, null, out var context) ? context : default);
+            using Activity? activity = ForumConsumerMetrics.ActivitySource.StartActivity("consumer", ActivityKind.Consumer,
+                ActivityContext.TryParse(activityId, null, out ActivityContext context) ? context : default);
             activity?.AddTag("messaging.system", "kafka");
             activity?.AddTag("messaging.destination.name", "fews.DomainEvents");
             activity?.AddTag("messaging.kafka.consumer_group", consumerConfig.GroupId);
             activity?.AddTag("messaging.kafka.partition", consumeResult.Partition);
-        
-            var domainEventWrapper = JsonSerializer.Deserialize<DomainEventWrapper>(consumeResult.Message.Value)!;
-            var contentBlob = Convert.FromBase64String(domainEventWrapper.ContentBlob);
-            var domainEvent = JsonSerializer.Deserialize<ForumDomainEvent>(contentBlob)!;
+
+            DomainEventWrapper domainEventWrapper = JsonSerializer.Deserialize<DomainEventWrapper>(consumeResult.Message.Value) ?? throw new InvalidOperationException();
+            byte[] contentBlob = Convert.FromBase64String(domainEventWrapper.ContentBlob);
+            ForumDomainEvent domainEvent = JsonSerializer.Deserialize<ForumDomainEvent>(contentBlob) ?? throw new InvalidOperationException();
         
             switch (domainEvent.EventType)
             {
@@ -56,12 +56,17 @@ internal class ForumSearchConsumer(
                     }, cancellationToken: stoppingToken);
                     break;
                 case ForumDomainEventType.CommentCreated:
-                    await searchEngineClient.IndexAsync(new IndexRequest
+                    if (domainEvent.Comment != null)
                     {
-                        Id = domainEvent.Comment!.CommentId.ToString(),
-                        Type = SearchEntityType.ForumComment,
-                        Text = domainEvent.Comment.Text
-                    }, cancellationToken: stoppingToken);
+                        await searchEngineClient.IndexAsync(new IndexRequest
+                            {
+                                Id = domainEvent.Comment.CommentId.ToString(),
+                                Type = SearchEntityType.ForumComment,
+                                Text = domainEvent.Comment.Text
+                            },
+                            cancellationToken: stoppingToken);
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(domainEvent.EventType.ToString());
