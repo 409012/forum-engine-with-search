@@ -19,11 +19,11 @@ public class Topic
     public required string Title { get; set; }
 
     [ForeignKey(nameof(UserId))]
-    public User Author { get; set; } = null!;
+    public User? Author { get; set; }
 
     [ForeignKey(nameof(ForumId))]
-    public Forum Forum { get; set; } = null!;
+    public Forum? Forum { get; set; }
 
     [InverseProperty(nameof(Comment.Topic))]
-    public ICollection<Comment> Comments { get; init; } = null!;
+    public ICollection<Comment> Comments { get; init; } = new List<Comment>();
 }

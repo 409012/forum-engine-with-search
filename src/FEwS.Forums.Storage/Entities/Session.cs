@@ -13,5 +13,5 @@ public class Session
     public DateTimeOffset ExpiresAt { get; set; }
 
     [ForeignKey(nameof(UserId))]
-    public User User { get; set; } = null!;
+    public User? User { get; set; }
 }
