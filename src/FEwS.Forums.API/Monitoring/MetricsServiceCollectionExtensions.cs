@@ -21,13 +21,14 @@ internal static class MetricsServiceCollectionExtensions
                 .AddAspNetCoreInstrumentation(options =>
                 {
                     options.Filter += context =>
-                        !context.Request.Path.Value!.Contains("metrics", StringComparison.InvariantCultureIgnoreCase) &&
-                        !context.Request.Path.Value!.Contains("swagger", StringComparison.InvariantCultureIgnoreCase);
+                        context.Request.Path.Value != null &&
+                        !context.Request.Path.Value.Contains("metrics", StringComparison.InvariantCultureIgnoreCase) &&
+                        !context.Request.Path.Value.Contains("swagger", StringComparison.InvariantCultureIgnoreCase);
                     options.EnrichWithHttpResponse = (activity, response) =>
                         activity.AddTag("error", response.StatusCode >= 400);
                 })
                 .AddEntityFrameworkCoreInstrumentation(options => options.SetDbStatementForText = true)
-                .AddJaegerExporter(cfg => cfg.Endpoint = new Uri(configuration.GetConnectionString("Tracing")!)));
+                .AddJaegerExporter(cfg => cfg.Endpoint = new Uri(configuration.GetConnectionString("Tracing") ?? throw new InvalidOperationException())));
 
         return services;
     }
