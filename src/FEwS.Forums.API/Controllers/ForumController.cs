@@ -20,11 +20,11 @@ public class ForumController(
     [ProducesResponseType(403)]
     [ProducesResponseType(201, Type = typeof(Forum))]
     public async Task<IActionResult> CreateForumAsync(
-        [FromBody] CreateForum request,
+        [FromBody] CreateForumRequest request,
         CancellationToken cancellationToken)
     {
         var command = new CreateForumCommand(request.Title);
-        var forum = await mediator.Send(command, cancellationToken);
+        Domain.Models.Forum forum = await mediator.Send(command, cancellationToken);
         return CreatedAtRoute(nameof(GetForumsAsync), mapper.Map<Forum>(forum));
     }
 
@@ -33,7 +33,7 @@ public class ForumController(
     public async Task<IActionResult> GetForumsAsync(
         CancellationToken cancellationToken)
     {
-        var forums = await mediator.Send(new GetForumsQuery(), cancellationToken);
+        IEnumerable<Domain.Models.Forum> forums = await mediator.Send(new GetForumsQuery(), cancellationToken);
         return Ok(forums.Select(mapper.Map<Forum>));
     }
 
@@ -44,11 +44,11 @@ public class ForumController(
     [ProducesResponseType(201, Type = typeof(Topic))]
     public async Task<IActionResult> CreateTopicAsync(
         Guid forumId,
-        [FromBody] CreateTopic request,
+        [FromBody] CreateTopicRequest request,
         CancellationToken cancellationToken)
     {
         var command = new CreateTopicCommand(forumId, request.Title);
-        var topic = await mediator.Send(command, cancellationToken);
+        Domain.Models.Topic topic = await mediator.Send(command, cancellationToken);
         return CreatedAtRoute(nameof(GetForumsAsync), mapper.Map<Topic>(topic));
     }
 
@@ -63,7 +63,7 @@ public class ForumController(
         CancellationToken cancellationToken)
     {
         var query = new GetTopicsQuery(forumId, skip, take);
-        var topicsPagedResult = await mediator.Send(query, cancellationToken);
+        Domain.Models.TopicsPagedResult topicsPagedResult = await mediator.Send(query, cancellationToken);
         return Ok(mapper.Map<TopicsPagedResult>(topicsPagedResult));
     }
 }

@@ -18,11 +18,11 @@ public class TopicController(
     [ProducesResponseType(200, Type = typeof(Comment))]
     public async Task<IActionResult> CreateCommentAsync(
         Guid topicId,
-        [FromBody] CreateComment request,
+        [FromBody] CreateCommentRequest request,
         CancellationToken cancellationToken)
     {
         var command = new CreateCommentCommand(topicId, request.Text);
-        var comment = await mediator.Send(command, cancellationToken);
+        Domain.Models.Comment comment = await mediator.Send(command, cancellationToken);
         return Ok(mapper.Map<Comment>(comment));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FEwS.Forums.API.Authentication;
 using FEwS.Forums.API.Models;
+using FEwS.Forums.Domain.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FEwS.Forums.Domain.UseCases.SignIn;
@@ -13,20 +14,20 @@ public class AccountController(ISender mediator) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> SignOnAsync(
-        [FromBody] SignOn request,
+        [FromBody] SignOnRequest request,
         CancellationToken cancellationToken)
     {
-        var identity = await mediator.Send(new SignOnCommand(request.UserName, request.Password), cancellationToken);
+        IIdentity identity = await mediator.Send(new SignOnCommand(request.UserName, request.Password), cancellationToken);
         return Ok(identity);
     }
 
     [HttpPost("signin")]
     public async Task<IActionResult> SignInAsync(
-        [FromBody] SignIn request,
+        [FromBody] SignInRequest request,
         [FromServices] IAuthTokenStorage tokenStorage,
         CancellationToken cancellationToken)
     {
-        var (identity, token) = await mediator.Send(
+        (IIdentity identity, string token) = await mediator.Send(
             new SignInCommand(request.UserName, request.Password), cancellationToken);
         tokenStorage.Store(HttpContext, token);
         return Ok(identity);
