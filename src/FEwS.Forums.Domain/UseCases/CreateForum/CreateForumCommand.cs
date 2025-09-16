@@ -8,9 +8,13 @@ public record CreateForumCommand(string Title) : IRequest<Forum>, IMonitoredRequ
 {
     private const string CounterName = "forums.created";
     
-    public void MonitorSuccess(DomainMetrics metrics) => 
+    public void MonitorSuccess(DomainMetrics metrics)
+    {
         metrics.IncrementCount(CounterName, 1, DomainMetrics.ResultTags(true));
+    }
 
-    public void MonitorFailure(DomainMetrics metrics) => 
+    public void MonitorFailure(DomainMetrics metrics)
+    {
         metrics.IncrementCount(CounterName, 1, DomainMetrics.ResultTags(false));
+    }
 }

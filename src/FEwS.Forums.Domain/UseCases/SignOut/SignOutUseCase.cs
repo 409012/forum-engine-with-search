@@ -8,6 +8,8 @@ internal class SignOutUseCase(
     ISignOutStorage storage)
     : IRequestHandler<SignOutCommand>
 {
-    public Task Handle(SignOutCommand command, CancellationToken cancellationToken) => 
-        storage.RemoveSessionAsync(identityProvider.Current.SessionId, cancellationToken);
+    public Task Handle(SignOutCommand command, CancellationToken cancellationToken)
+    {
+        return storage.RemoveSessionAsync(identityProvider.Current.SessionId, cancellationToken);
+    }
 }

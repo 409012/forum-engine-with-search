@@ -8,9 +8,13 @@ public record GetTopicsQuery(Guid ForumId, int Skip, int Take) : IRequest<Topics
 {
     private const string CounterName = "topics.fetched";
     
-    public void MonitorSuccess(DomainMetrics metrics) => 
+    public void MonitorSuccess(DomainMetrics metrics)
+    {
         metrics.IncrementCount(CounterName, 1, DomainMetrics.ResultTags(true));
+    }
 
-    public void MonitorFailure(DomainMetrics metrics) => 
+    public void MonitorFailure(DomainMetrics metrics)
+    {
         metrics.IncrementCount(CounterName, 1, DomainMetrics.ResultTags(false));
+    }
 }

@@ -8,9 +8,13 @@ public record SignInCommand(string UserName, string Password) : IRequest<(IIdent
 {
     private const string CounterName = "account.signedin";
     
-    public void MonitorSuccess(DomainMetrics metrics) => 
+    public void MonitorSuccess(DomainMetrics metrics)
+    {
         metrics.IncrementCount(CounterName, 1, DomainMetrics.ResultTags(true));
+    }
 
-    public void MonitorFailure(DomainMetrics metrics) => 
+    public void MonitorFailure(DomainMetrics metrics)
+    {
         metrics.IncrementCount(CounterName, 1, DomainMetrics.ResultTags(false));
+    }
 }

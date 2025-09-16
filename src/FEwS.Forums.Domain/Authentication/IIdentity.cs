@@ -8,5 +8,8 @@ public interface IIdentity
 
 internal static class IdentityExtensions
 {
-    public static bool IsAuthenticated(this IIdentity identity) => identity.UserId != Guid.Empty;
+    public static bool IsAuthenticated(this IIdentity identity)
+    {
+        return identity.UserId != Guid.Empty;
+    }
 }

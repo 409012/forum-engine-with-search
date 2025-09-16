@@ -5,9 +5,12 @@ namespace FEwS.Forums.Domain.Authorization;
 
 internal class ForumIntentionResolver : IIntentionResolver<ForumIntention>
 {
-    public bool IsAllowed(IIdentity subject, ForumIntention intention) => intention switch
+    public bool IsAllowed(IIdentity subject, ForumIntention intention)
     {
-        ForumIntention.Create => subject.IsAuthenticated(),
-        _ => false
-    };
+        return intention switch
+        {
+            ForumIntention.Create => subject.IsAuthenticated(),
+            _ => false
+        };
+    }
 }
