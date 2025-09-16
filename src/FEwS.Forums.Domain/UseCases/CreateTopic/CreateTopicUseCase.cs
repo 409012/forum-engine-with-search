@@ -17,13 +17,13 @@ internal class CreateTopicUseCase(
 {
     public async Task<Topic> Handle(CreateTopicCommand command, CancellationToken cancellationToken)
     {
-        var (forumId, title) = command;
+        (Guid forumId, string title) = command;
         intentionManager.ThrowIfForbidden(TopicIntention.Create);
 
         await getForumsStorage.ThrowIfForumNotFound(forumId, cancellationToken);
 
-        await using var scope = await unitOfWork.StartScope(cancellationToken);
-        var topic = await scope.GetStorage<ICreateTopicStorage>()
+        await using IUnitOfWorkScope scope = await unitOfWork.StartScope(cancellationToken);
+        Topic topic = await scope.GetStorage<ICreateTopicStorage>()
             .CreateTopicAsync(forumId, identityProvider.Current.UserId, title, cancellationToken);
         await scope.GetStorage<IDomainEventStorage>()
             .AddEventAsync(ForumDomainEvent.TopicCreated(topic), cancellationToken);

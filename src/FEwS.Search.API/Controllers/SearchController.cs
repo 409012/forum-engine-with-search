@@ -24,7 +24,7 @@ public class SearchController(IMediator mediator) : ControllerBase
         string query,
         CancellationToken cancellationToken)
     {
-        var (resources, totalCount) = await mediator.Send(new SearchQuery(query), cancellationToken);
+        (IEnumerable<SearchResult> resources, int totalCount) = await mediator.Send(new SearchQuery(query), cancellationToken);
         return Ok(new {resources, totalCount});
     }
 }

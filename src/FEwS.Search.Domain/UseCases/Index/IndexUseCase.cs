@@ -6,7 +6,7 @@ internal class IndexUseCase(IIndexStorage storage) : IRequestHandler<IndexComman
 {
     public Task Handle(IndexCommand request, CancellationToken cancellationToken)
     {
-        var (entityId, searchEntityType, title, text) = request;
+        (Guid entityId, Models.SearchEntityType searchEntityType, string? title, string? text) = request;
         return storage.Index(entityId, searchEntityType, title, text, cancellationToken);
     }
 }

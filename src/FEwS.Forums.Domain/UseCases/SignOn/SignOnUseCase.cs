@@ -13,8 +13,8 @@ internal class SignOnUseCase(
     public async Task<IIdentity> Handle(SignOnCommand command, CancellationToken cancellationToken)
     {
         var user = new User();
-        var passwordHash = passwordHasher.HashPassword(user, command.Password);
-        var userId = await storage.CreateUserAsync(command.UserName, passwordHash, cancellationToken);
+        string passwordHash = passwordHasher.HashPassword(user, command.Password);
+        Guid userId = await storage.CreateUserAsync(command.UserName, passwordHash, cancellationToken);
 
         return new Authentication.User(userId, Guid.Empty);
     }

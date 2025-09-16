@@ -17,12 +17,12 @@ internal class MonitoringPipelineBehavior<TRequest, TResponse>(
     {
         if (request is not IMonitoredRequest monitoredRequest) return await next.Invoke();
 
-        using var activity = DomainMetrics.ActivitySource.StartActivity("usecase", ActivityKind.Internal, default(ActivityContext));
+        using Activity? activity = DomainMetrics.ActivitySource.StartActivity("usecase", ActivityKind.Internal, default(ActivityContext));
         activity?.AddTag("fews.command", request.GetType().Name);
 
         try
         {
-            var result = await next.Invoke();
+            TResponse result = await next.Invoke();
 
             logger.LogInformation("Command successfully handled {Command}", request);
             monitoredRequest.MonitorSuccess(metrics);

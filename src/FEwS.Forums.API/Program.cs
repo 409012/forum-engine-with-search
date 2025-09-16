@@ -6,7 +6,7 @@ using FEwS.Forums.Domain.Authentication;
 using FEwS.Forums.Domain.DependencyInjection;
 using FEwS.Forums.Storage.DependencyInjection;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddApiLogging(builder.Configuration, builder.Environment)
@@ -16,14 +16,14 @@ builder.Services.AddScoped<IAuthTokenStorage, AuthTokenStorage>();
 
 builder.Services
     .AddForumDomain()
-    .AddForumStorage(builder.Configuration.GetConnectionString("Postgres")!);
+    .AddForumStorage(builder.Configuration.GetConnectionString("Postgres") ?? throw new InvalidOperationException());
 builder.Services.AddAutoMapper(config => config.AddMaps(Assembly.GetExecutingAssembly()));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();

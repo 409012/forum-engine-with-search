@@ -3,7 +3,7 @@ using FEwS.Search.API.Monitoring;
 using FEwS.Search.Domain.DependencyInjection;
 using FEwS.Search.Storage.DependencyInjection;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddApiLogging(builder.Configuration, builder.Environment)
@@ -14,14 +14,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddSearchDomain()
-    .AddSearchStorage(builder.Configuration.GetConnectionString("SearchIndex")!);
+    .AddSearchStorage(builder.Configuration.GetConnectionString("SearchIndex") ?? throw new InvalidOperationException());
 
 builder.Services.AddGrpcReflection().AddGrpc();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 

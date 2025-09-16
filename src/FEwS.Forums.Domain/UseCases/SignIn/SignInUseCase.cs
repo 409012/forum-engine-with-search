@@ -17,7 +17,7 @@ internal class SignInUseCase(
     public async Task<(IIdentity identity, string token)> Handle(
         SignInCommand command, CancellationToken cancellationToken)
     {
-        var recognisedUser = await storage.FindUserAsync(command.UserName, cancellationToken);
+        User? recognisedUser = await storage.FindUserAsync(command.UserName, cancellationToken);
         if (recognisedUser is null)
         {
             throw new ValidationException([
@@ -29,10 +29,10 @@ internal class SignInUseCase(
                 }
             ]);
         }
-        var passwordVerificationResult = passwordHasher
+        PasswordVerificationResult passwordVerificationResult = passwordHasher
             .VerifyHashedPassword(recognisedUser, recognisedUser.PasswordHash, command.Password);
-        var passwordMatches = passwordVerificationResult 
-                              == PasswordVerificationResult.Success;;
+        bool passwordMatches = passwordVerificationResult 
+                              == PasswordVerificationResult.Success;
         if (!passwordMatches)
         {
             throw new ValidationException([
@@ -45,9 +45,9 @@ internal class SignInUseCase(
             ]);
         }
 
-        var sessionId = await storage.CreateSessionAsync(
+        Guid sessionId = await storage.CreateSessionAsync(
             recognisedUser.UserId, DateTimeOffset.UtcNow + TimeSpan.FromHours(1), cancellationToken);
-        var token = await encryptor.EncryptAsync(sessionId.ToString(), cancellationToken);
+        string token = await encryptor.EncryptAsync(sessionId.ToString(), cancellationToken);
         return (new Authentication.User(recognisedUser.UserId, sessionId), token);
     }
 }

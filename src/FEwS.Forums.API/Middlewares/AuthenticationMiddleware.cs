@@ -11,7 +11,7 @@ public class AuthenticationMiddleware(RequestDelegate next)
         IAuthenticationService authenticationService,
         IIdentityProvider identityProvider)
     {
-        var identity = tokenStorage.TryExtract(httpContext, out var authToken)
+        IIdentity identity = tokenStorage.TryExtract(httpContext, out string authToken)
             ? await authenticationService.AuthenticateAsync(authToken, httpContext.RequestAborted)
             : User.Guest;
         identityProvider.Current = identity;
