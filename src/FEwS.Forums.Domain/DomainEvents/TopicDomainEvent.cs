@@ -1,4 +1,5 @@
 ﻿using FEwS.Forums.Domain.Models;
+using JetBrains.Annotations;
 
 namespace FEwS.Forums.Domain.DomainEvents;
 
@@ -8,17 +9,24 @@ public class ForumDomainEvent
     {
     }
 
+    [UsedImplicitly]
     public ForumDomainEventType EventType { get; init; }
 
+    [UsedImplicitly]
     public Guid TopicId { get; init; }
 
+    [UsedImplicitly]
     public string? Title { get; init; }
     
+    [UsedImplicitly]
     public ForumComment? Comment { get; init; }
 
     public class ForumComment
     {
+        [UsedImplicitly]
         public Guid CommentId { get; init; }
+        
+        [UsedImplicitly]
         public string? Text { get; init; }
     }
 

@@ -1,4 +1,6 @@
-﻿namespace FEwS.Forums.Domain.Models;
+﻿using JetBrains.Annotations;
+
+namespace FEwS.Forums.Domain.Models;
 
 public class TopicReadModel
 {
@@ -11,6 +13,9 @@ public class TopicReadModel
 
 public class TopicTopicReadModelComment
 {
+    [UsedImplicitly]
     public Guid? Id { get; set; }
+    
+    [UsedImplicitly]
     public DateTimeOffset? CreatedAt { get; set; }
 }

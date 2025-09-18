@@ -1,4 +1,6 @@
-﻿namespace FEwS.Search.ForumConsumer;
+﻿using JetBrains.Annotations;
+
+namespace FEwS.Search.ForumConsumer;
 
 public class DomainEventWrapper
 {
@@ -17,7 +19,10 @@ public class ForumDomainEvent
 
     public class ForumComment
     {
+        [UsedImplicitly]
         public Guid CommentId { get; set; }
+        
+        [UsedImplicitly]
         public string? Text { get; set; }
     }
 }
