@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="FluentValidation" />
+        <PackageReference Include="JetBrains.Annotations" />
         <PackageReference Include="MediatR" />
     </ItemGroup>
 

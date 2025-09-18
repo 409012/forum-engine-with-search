@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" />
+        <PackageReference Include="JetBrains.Annotations" />
         <PackageReference Include="OpenTelemetry.Exporter.Jaeger" />
         <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
