@@ -20,8 +20,9 @@ public class ForumEndpointsShould(ForumApiApplicationFactory factory) : IClassFi
             .Should().NotBeNull().And
             .Subject.As<API.Models.Forum[]>().Should().NotContain(f => f.Title.Equals(forumTitle));
 
+        using var forumJsonContent = JsonContent.Create(new { title = forumTitle });
         using HttpResponseMessage response = await httpClient.PostAsync("forums",
-            JsonContent.Create(new { title = forumTitle }));
+            forumJsonContent);
 
         response.IsSuccessStatusCode.Should().BeTrue();
         API.Models.Forum? forum = await response.Content.ReadFromJsonAsync<API.Models.Forum>();

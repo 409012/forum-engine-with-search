@@ -23,15 +23,17 @@ public class TopicEndpointsShould(ForumApiApplicationFactory factory)
     {
         using HttpClient httpClient = factory.CreateClient();
 
+        using var forumJsonContent = JsonContent.Create(new { title = "Test forum" });
         using HttpResponseMessage forumCreatedResponse = await httpClient.PostAsync("forums",
-            JsonContent.Create(new { title = "Test forum" }));
+            forumJsonContent);
         forumCreatedResponse.EnsureSuccessStatusCode();
 
         API.Models.Forum? createdForum = await forumCreatedResponse.Content.ReadFromJsonAsync<API.Models.Forum>();
         createdForum.Should().NotBeNull();
 
+        using var topicJsonContent = JsonContent.Create(new { title = "Hello world" });
         HttpResponseMessage responseMessage = await httpClient.PostAsync($"forums/{createdForum.Id}/topics",
-            JsonContent.Create(new { title = "Hello world" }));
+            topicJsonContent);
         responseMessage.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
     }
 }

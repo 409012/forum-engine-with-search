@@ -32,7 +32,7 @@ public class StorageTestFixture : IAsyncLifetime
     public virtual async Task InitializeAsync()
     {
         await dbContainer.StartAsync();
-        var forumDbContext = new ForumDbContext(new DbContextOptionsBuilder<ForumDbContext>()
+        await using var forumDbContext = new ForumDbContext(new DbContextOptionsBuilder<ForumDbContext>()
             .UseNpgsql(dbContainer.GetConnectionString()).Options);
         await forumDbContext.Database.MigrateAsync();
     }
