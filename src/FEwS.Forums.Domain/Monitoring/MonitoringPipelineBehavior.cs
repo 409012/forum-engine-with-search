@@ -17,14 +17,15 @@ internal class MonitoringPipelineBehavior<TRequest, TResponse>(
     {
         if (request is not IMonitoredRequest monitoredRequest) return await next.Invoke();
 
+        string commandName = request.GetType().Name;
         using Activity? activity = DomainMetrics.ActivitySource.StartActivity("usecase", ActivityKind.Internal, default(ActivityContext));
-        activity?.AddTag("fews.command", request.GetType().Name);
+        activity?.AddTag("fews.command", commandName);
 
         try
         {
             TResponse result = await next.Invoke();
 
-            logger.LogInformation("Command successfully handled {Command}", request);
+            logger.LogInformation("Command successfully handled {CommandName}", commandName);
             monitoredRequest.MonitorSuccess(metrics);
             activity?.AddTag("error", false);
 
@@ -32,7 +33,7 @@ internal class MonitoringPipelineBehavior<TRequest, TResponse>(
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Unhandled error caught while handling command {Command}", request);
+            logger.LogError(e, "Unhandled error caught while handling command {CommandName}", commandName);
             monitoredRequest.MonitorFailure(metrics);
             activity?.AddTag("error", true);
 
