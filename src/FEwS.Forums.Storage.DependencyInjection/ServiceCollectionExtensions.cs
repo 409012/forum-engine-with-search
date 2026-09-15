@@ -25,6 +25,7 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAuthenticationStorage, AuthenticationStorage>()
             .AddScoped<ICreateForumStorage, CreateForumStorage>()
             .AddScoped<IGetForumsStorage, GetForumsStorage>()
+            .AddSingleton<ForumsCache>()
             .AddScoped<ICreateTopicStorage, CreateTopicStorage>()
             .AddScoped<IGetTopicsStorage, GetTopicsStorage>()
             .AddScoped<ICreateCommentStorage, CreateCommentStorage>()

@@ -610,3 +610,5 @@ dotnet_diagnostic.SA1602.severity = none
 dotnet_diagnostic.SA1615.severity = none
 
 resharper_braces_redundant = false
+
+dotnet_diagnostic.IDE0058.severity = error
