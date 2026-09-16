@@ -23,6 +23,15 @@ internal class SearchStorage(IOpenSearchClient client) : ISearchStorage
                     f => f.Field(se => se.Title),
                     f => f.Field(se => se.Text).PreTags("<mark>").PostTags("</mark>"))),
             cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+        if (!searchResponse.IsValid)
+        {
+            throw new InvalidOperationException(
+                $"OpenSearch search failed. HTTP status: {searchResponse.ApiCall?.HttpStatusCode}.",
+                searchResponse.OriginalException);
+        }
+
         IEnumerable<SearchResult> searchResults = searchResponse.Hits.Select(hit =>
             new SearchResult
         {

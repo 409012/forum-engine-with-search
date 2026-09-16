@@ -10,12 +10,20 @@ internal class IndexStorage(IOpenSearchClient client) : IIndexStorage
     public async Task Index(Guid entityId, SearchEntityType entityType, string? title, string? text,
         CancellationToken cancellationToken)
     {
-        await client.IndexAsync(new Entities_SearchEntity
+        IndexResponse response = await client.IndexAsync(new Entities_SearchEntity
         {
             EntityId = entityId,
             EntityType = (int)entityType,
             Title = title,
             Text = text,
         }, descriptor => descriptor, cancellationToken);
+
+        cancellationToken.ThrowIfCancellationRequested();
+        if (!response.IsValid)
+        {
+            throw new InvalidOperationException(
+                $"OpenSearch indexing failed for entity {entityId}. HTTP status: {response.ApiCall?.HttpStatusCode}.",
+                response.OriginalException);
+        }
     }
 }
