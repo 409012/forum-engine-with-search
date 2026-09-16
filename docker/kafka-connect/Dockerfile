@@ -1,8 +1,9 @@
-FROM confluentinc/cp-kafka-connect-base:7.7.1
+FROM quay.io/debezium/connect:2.7.4.Final
 
-RUN confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.7.4
+ENV KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:/kafka/config/log4j.properties"
 
-COPY worker.properties .
-COPY fews-source-connector.properties .
+COPY --chown=kafka:kafka worker.properties /kafka/worker.properties
+COPY --chown=kafka:kafka fews-source-connector.properties /kafka/fews-source-connector.properties
 
-CMD ["/bin/connect-standalone", "worker.properties", "fews-source-connector.properties"]
+ENTRYPOINT ["/kafka/bin/connect-standalone.sh"]
+CMD ["/kafka/worker.properties", "/kafka/fews-source-connector.properties"]

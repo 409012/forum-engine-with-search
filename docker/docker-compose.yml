@@ -7,6 +7,7 @@ networks:
 volumes:
   fews-grafana:
   fews-kafka:
+  fews-connect:
   fews-logs:
   fews-os:
   fews-pg:
@@ -63,14 +64,20 @@ services:
       - fews-kafka:/var/lib/kafka/data
 
   kafka-connect:
-    container_name: fews-jdbc-connect
-    image: kafka-connect-jdbc:local
+    container_name: fews-connect
+    image: fews-kafka-connect-cdc:local
+    restart: unless-stopped
     build:
       context: ./kafka-connect
     ports:
       - '8083:8083'
+    volumes:
+      - fews-connect:/kafka/data
     depends_on:
-      - kafka-broker
+      kafka-broker:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   kafka-ui:
     container_name: fews-kui
@@ -79,7 +86,7 @@ services:
       - "8082:8080"
     environment:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: fews-kb:29092
-      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://fews-jdbc-connect:8083
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://fews-connect:8083
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: domain-events-outbox
       KAFKA_CLUSTERS_0_NAME: local-docker
     depends_on:
@@ -122,6 +129,12 @@ services:
   postgres:
     container_name: fews-pg
     image: postgres:16.4
+    command: ["postgres", "-c", "wal_level=logical"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fews"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports:
       - '5432:5432'
     environment:
