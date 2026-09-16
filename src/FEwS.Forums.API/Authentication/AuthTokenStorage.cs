@@ -21,4 +21,9 @@ internal class AuthTokenStorage : IAuthTokenStorage
     {
         httpContext.Response.Cookies.Append(HeaderKey, token);
     }
+
+    public void Remove(HttpContext httpContext)
+    {
+        httpContext.Response.Cookies.Delete(HeaderKey);
+    }
 }
