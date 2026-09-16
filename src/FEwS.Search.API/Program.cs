@@ -1,4 +1,5 @@
 using FEwS.Search.API.Controllers;
+using FEwS.Search.API.Authentication;
 using FEwS.Search.API.Monitoring;
 using FEwS.Search.Domain.DependencyInjection;
 using FEwS.Search.Storage.DependencyInjection;
@@ -12,6 +13,8 @@ builder.Services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddIndexingAuthentication(builder.Configuration);
+
 builder.Services
     .AddSearchDomain()
     .AddSearchStorage(builder.Configuration.GetConnectionString("SearchIndex") ?? throw new InvalidOperationException());
@@ -24,6 +27,8 @@ builder.Services.AddEndpointsApiExplorer();
 WebApplication app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapGrpcService<SearchEngineGrpcService>();

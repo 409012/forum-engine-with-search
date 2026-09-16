@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using FEwS.Search.Domain.Models;
 using FEwS.Search.Domain.UseCases.Index;
 using FEwS.Search.Domain.UseCases.Search;
+using FEwS.Search.API.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FEwS.Search.API.Controllers;
 
 public class SearchController(IMediator mediator) : ControllerBase
 {
     [HttpPost("index")]
+    [Authorize(Policy = IndexingAuthenticationOptions.SchemeName)]
     public async Task<IActionResult> Index(
         [FromBody] SearchEntity searchEntity,
         CancellationToken cancellationToken)
@@ -22,9 +25,21 @@ public class SearchController(IMediator mediator) : ControllerBase
     [HttpGet("search")]
     public async Task<IActionResult> Search(
         string query,
-        CancellationToken cancellationToken)
+        [FromQuery] SearchEntityType[]? searchIn,
+        CancellationToken cancellationToken,
+        int skip = 0,
+        int size = SearchQuery.DefaultSize)
     {
-        (IEnumerable<SearchResult> resources, int totalCount) = await mediator.Send(new SearchQuery(query), cancellationToken);
+        searchIn ??= [];
+        if (!ModelState.IsValid || string.IsNullOrWhiteSpace(query) || skip < 0
+            || size is < 1 or > SearchQuery.MaximumSize
+            || searchIn.Any(entityType => !Enum.IsDefined(entityType)))
+        {
+            return BadRequest();
+        }
+
+        var searchQuery = new SearchQuery(query, searchIn.Distinct().ToArray(), skip, size);
+        (IEnumerable<SearchResult> resources, int totalCount) = await mediator.Send(searchQuery, cancellationToken);
         return Ok(new {resources, totalCount});
     }
 }

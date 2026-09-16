@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using FEwS.Search.API.Grpc;
 using FEwS.Search.ForumConsumer;
 using FEwS.Search.ForumConsumer.Monitoring;
 
@@ -9,13 +8,7 @@ builder.Services
     .AddApiLogging(builder.Configuration, builder.Environment)
     .AddApiMetrics(builder.Configuration, builder.Environment);
 
-builder.Services.AddGrpcClient<SearchEngine.SearchEngineClient>(options =>
-        options.Address = new Uri(builder.Configuration.GetConnectionString("SearchEngine") ?? throw new InvalidOperationException()))
-    .ConfigurePrimaryHttpMessageHandler(() =>
-        new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        });
+builder.Services.AddAuthenticatedSearchClient(builder.Configuration);
 
 builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetSection("Kafka").Bind);
 builder.Services.PostConfigure<ConsumerConfig>(options =>

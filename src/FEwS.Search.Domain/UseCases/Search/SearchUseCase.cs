@@ -9,6 +9,11 @@ internal class SearchUseCase(ISearchStorage storage)
     public Task<(IEnumerable<SearchResult> resources, int totalCount)> Handle(
         SearchQuery request, CancellationToken cancellationToken)
     {
-        return storage.Search(request.Query, cancellationToken);
+        return storage.Search(
+            request.Query,
+            request.SearchIn,
+            request.Skip,
+            request.Size,
+            cancellationToken);
     }
 }
