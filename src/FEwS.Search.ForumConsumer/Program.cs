@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using Microsoft.Extensions.Options;
 using FEwS.Search.API.Grpc;
 using FEwS.Search.ForumConsumer;
 using FEwS.Search.ForumConsumer.Monitoring;
@@ -19,8 +18,20 @@ builder.Services.AddGrpcClient<SearchEngine.SearchEngineClient>(options =>
         });
 
 builder.Services.Configure<ConsumerConfig>(builder.Configuration.GetSection("Kafka").Bind);
-builder.Services.AddSingleton(sp => new ConsumerBuilder<byte[], byte[]>(
-    sp.GetRequiredService<IOptions<ConsumerConfig>>().Value).Build());
+builder.Services.PostConfigure<ConsumerConfig>(options =>
+{
+    options.EnableAutoCommit = false;
+    options.EnableAutoOffsetStore = false;
+    options.MaxPollIntervalMs = Math.Max(options.MaxPollIntervalMs ?? 300000, 120000);
+});
+builder.Services.Configure<ProducerConfig>(builder.Configuration.GetSection("Kafka").Bind);
+builder.Services.PostConfigure<ProducerConfig>(options =>
+{
+    options.EnableIdempotence = true;
+    options.Acks = Acks.All;
+    options.MessageTimeoutMs = 10000;
+});
+builder.Services.AddSingleton<KafkaClientFactory>();
 
 builder.Services.AddHostedService<ForumSearchConsumer>();
 

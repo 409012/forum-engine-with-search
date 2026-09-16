@@ -61,27 +61,6 @@ FEwS состоит из двух основных микросервисов:
 Формат для consumer сохранён: topic `fews.DomainEvents`, ключ `DomainEventId`, JSON с Base64-полем `ContentBlob` и заголовок `activity_id`. Удаление строки из outbox не публикуется как удаление форумной сущности.
 Позиция чтения хранится в volume `fews-connect`, а replication slot — в PostgreSQL. При пересоздании контейнера коннектор продолжает с сохранённой позиции. Не удаляйте volume с offsets или replication slot при обычном перезапуске. Доставка допускает повторы после сбоя; индексация использует стабильный идентификатор документа.
 
-### Переход с JDBC-коннектора
-
-Остановите старый коннектор перед переключением и пересоздайте PostgreSQL с новой конфигурацией. Данные в существующем volume PostgreSQL сохраняются:
-
-```sh
-docker compose -f docker/docker-compose.yml stop kafka-connect
-docker compose -f docker/docker-compose.yml up -d postgres
-dotnet ef database update --project src/FEwS.Forums.Storage --startup-project src/FEwS.Forums.API
-docker compose -f docker/docker-compose.yml up -d --build kafka-connect kafka-ui
-```
-
-Проверьте состояние коннектора и его task:
-
-```sh
-curl --fail http://localhost:8083/connectors/fews.domain-events.cdc/status
-```
-
-Оба состояния должны быть `RUNNING`. Старый JDBC offset не переносится: первый snapshot повторно отправит сохранившиеся события, включая ранее пропущенные. Старые документы OpenSearch со случайными `_id` этим не удаляются.
-
-Пока коннектор недоступен, replication slot удерживает необходимые WAL-сегменты. Контролируйте свободное место PostgreSQL и отставание коннектора; удаление slot или потеря WAL требует отдельного восстановления, а не обычного перезапуска. Описание snapshot и продолжения чтения: [Debezium PostgreSQL connector](https://debezium.io/documentation/reference/2.7/connectors/postgresql.html).
-
 ## Возможности
 
 - Создание и просмотр форумов и тем.
