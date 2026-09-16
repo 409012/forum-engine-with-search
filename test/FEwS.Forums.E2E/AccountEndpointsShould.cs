@@ -5,11 +5,30 @@ using Microsoft.Extensions.DependencyInjection;
 using FEwS.Forums.Domain.Authentication;
 using FEwS.Forums.Storage;
 using Xunit;
+using System.Net;
+using System.Text.Json;
 
 namespace FEwS.Forums.E2E;
 
 public class AccountEndpointsShould(ForumApiApplicationFactory factory) : IClassFixture<ForumApiApplicationFactory>
 {
+    [Fact]
+    public async Task RejectDuplicateUserNameWithValidationError()
+    {
+        using HttpClient httpClient = factory.CreateClient();
+        string userName = Guid.NewGuid().ToString("N")[..12];
+        using HttpResponseMessage first = await httpClient.PostAsJsonAsync("account",
+            new { userName, password = "password" });
+        using HttpResponseMessage duplicate = await httpClient.PostAsJsonAsync("account",
+            new { userName = $" {userName.ToUpperInvariant()} ", password = "another-password" });
+
+        first.StatusCode.Should().Be(HttpStatusCode.OK);
+        duplicate.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        using var response = JsonDocument.Parse(await duplicate.Content.ReadAsStringAsync());
+        response.RootElement.GetProperty("errors").GetProperty("UserName")[0].GetString()
+            .Should().Be("AlreadyExists");
+    }
+
     [Fact]
     public async Task SignInAfterSignOn()
     {

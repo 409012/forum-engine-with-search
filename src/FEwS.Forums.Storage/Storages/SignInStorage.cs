@@ -16,7 +16,7 @@ internal class SignInStorage(
     public Task<User?> FindUserAsync(string userName, CancellationToken cancellationToken)
     {
         return dbContext.Users
-            .Where(u => u.UserName != null && u.UserName.Equals(userName))
+            .FromSql($"""SELECT * FROM "Users" WHERE "NormalizedUserName" = upper(btrim({userName}))""")
             .ProjectTo<User>(mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(cancellationToken);
     }

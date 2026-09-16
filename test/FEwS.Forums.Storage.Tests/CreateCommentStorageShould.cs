@@ -40,7 +40,7 @@ public class CreateCommentStorageShould(StorageTestFixture fixture) : IClassFixt
             Author = new User
             {
                 Id = userId,
-                UserName = "Test user",
+                UserName = "Topic author",
                 PasswordHash = string.Empty,
             },
             Title = "Test topic",

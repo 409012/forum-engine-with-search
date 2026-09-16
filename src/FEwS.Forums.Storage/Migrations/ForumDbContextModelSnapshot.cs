@@ -171,7 +171,9 @@ namespace FEwS.Forums.Storage.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("text");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasComputedColumnSql("upper(btrim(\"UserName\"))", true);
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
@@ -192,6 +194,10 @@ namespace FEwS.Forums.Storage.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Users_NormalizedUserName");
 
                     b.ToTable("Users");
                 });

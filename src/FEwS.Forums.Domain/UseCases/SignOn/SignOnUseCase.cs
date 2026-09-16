@@ -1,5 +1,8 @@
 ﻿using FEwS.Forums.Domain.Authentication;
 using MediatR;
+using FEwS.Forums.Domain.Exceptions;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 using User = FEwS.Forums.Domain.Models.User;
 
@@ -14,8 +17,18 @@ internal class SignOnUseCase(
     {
         var user = new User();
         string passwordHash = passwordHasher.HashPassword(user, command.Password);
-        Guid userId = await storage.CreateUserAsync(command.UserName, passwordHash, cancellationToken);
+        CreateUserResult result = await storage.CreateUserAsync(command.UserName, passwordHash, cancellationToken);
 
-        return new Authentication.User(userId, Guid.Empty);
+        return result switch
+        {
+            CreateUserResult.Created created => new Authentication.User(created.UserId, Guid.Empty),
+            CreateUserResult.DuplicateUserName => throw new ValidationException([
+                new ValidationFailure(nameof(command.UserName), "User name is already taken")
+                {
+                    ErrorCode = ValidationErrorCode.AlreadyExists
+                }
+            ]),
+            _ => throw new InvalidOperationException()
+        };
     }
 }
