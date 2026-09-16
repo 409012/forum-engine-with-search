@@ -17,10 +17,9 @@ internal class AuthenticationService(
         {
             sessionIdString = await decryptor.DecryptAsync(authToken, cancellationToken);
         }
-        catch (CryptographicException cryptographicException)
+        catch (Exception exception) when (exception is CryptographicException or FormatException)
         {
             logger.LogWarning(
-                cryptographicException,
                 "Cannot decrypt auth token, maybe someone is trying to forge it");
             return User.Guest;
         }

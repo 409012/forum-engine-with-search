@@ -1,6 +1,6 @@
-﻿namespace FEwS.Forums.Domain.Authentication;
+namespace FEwS.Forums.Domain.Authentication;
 
-internal interface ISymmetricDecryptor
+public interface ISymmetricDecryptor
 {
     Task<string> DecryptAsync(string encryptedText, CancellationToken cancellationToken);
 }

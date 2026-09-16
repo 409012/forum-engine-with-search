@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using FEwS.Forums.Domain.Authentication;
 using FEwS.Forums.Domain.Authorization;
@@ -26,9 +26,7 @@ public static class ServiceCollectionExtensions
         services
             .AddScoped<IIntentionManager, IntentionManager>()
             .AddScoped<IIdentityProvider, IdentityProvider>()
-            .AddScoped<IAuthenticationService, AuthenticationService>()
-            .AddScoped<ISymmetricDecryptor, AesSymmetricEncryptorDecryptor>()
-            .AddScoped<ISymmetricEncryptor, AesSymmetricEncryptorDecryptor>();
+            .AddScoped<IAuthenticationService, AuthenticationService>();
         
         services.AddScoped<IPasswordHasher<Models.User>, PasswordHasher<Models.User>>();
         

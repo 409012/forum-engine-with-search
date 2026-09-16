@@ -19,11 +19,19 @@ internal class AuthTokenStorage : IAuthTokenStorage
 
     public void Store(HttpContext httpContext, string token)
     {
-        httpContext.Response.Cookies.Append(HeaderKey, token);
+        httpContext.Response.Cookies.Append(HeaderKey, token, CreateCookieOptions());
     }
 
     public void Remove(HttpContext httpContext)
     {
-        httpContext.Response.Cookies.Delete(HeaderKey);
+        httpContext.Response.Cookies.Delete(HeaderKey, CreateCookieOptions());
     }
+
+    private static CookieOptions CreateCookieOptions() => new()
+    {
+        HttpOnly = true,
+        Secure = true,
+        SameSite = SameSiteMode.Strict,
+        Path = "/"
+    };
 }

@@ -1,6 +1,5 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using FluentValidation;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Language.Flow;
 using FEwS.Forums.Domain.Authentication;
@@ -34,14 +33,6 @@ public class SignInUseCaseShould
         encryptor = new Mock<ISymmetricEncryptor>();
         encryptSetup = encryptor.Setup(e =>
             e.EncryptAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()));
-
-        var configuration = new Mock<IOptions<AuthenticationConfiguration>>();
-        configuration
-            .Setup(c => c.Value)
-            .Returns(new AuthenticationConfiguration
-            {
-                Base64Key = "XtDotH86WLjaEoFev6uZFN/3C0EQIApoD+5iqqmPtpg="
-            });
 
         sut = new SignInUseCase(
             storage.Object,

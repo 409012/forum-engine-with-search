@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.DataProtection;
 using FEwS.Forums.API.Authentication;
 using FEwS.Forums.API.Middlewares;
 using FEwS.Forums.API.Monitoring;
@@ -11,7 +12,14 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddApiLogging(builder.Configuration, builder.Environment)
     .AddApiMetrics(builder.Configuration);
-builder.Services.Configure<AuthenticationConfiguration>(builder.Configuration.GetSection("Authentication").Bind);
+IDataProtectionBuilder dataProtection = builder.Services.AddDataProtection()
+    .SetApplicationName("FEwS.Forums");
+if (builder.Configuration["DataProtection:KeysPath"] is { Length: > 0 } keysPath)
+{
+    dataProtection.PersistKeysToFileSystem(new DirectoryInfo(keysPath));
+}
+builder.Services.AddScoped<ISymmetricEncryptor, DataProtectionTokenProtector>();
+builder.Services.AddScoped<ISymmetricDecryptor, DataProtectionTokenProtector>();
 builder.Services.AddScoped<IAuthTokenStorage, AuthTokenStorage>();
 
 builder.Services

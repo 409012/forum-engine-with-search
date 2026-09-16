@@ -1,9 +1,10 @@
-﻿using System.Security.Cryptography;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 using FEwS.Forums.Storage;
 using Xunit;
@@ -14,16 +15,21 @@ public class ForumApiApplicationFactory : WebApplicationFactory<Program>, IAsync
 {
     private readonly PostgreSqlContainer dbContainer = new PostgreSqlBuilder().Build();
 
+    public ForumApiApplicationFactory()
+    {
+        ClientOptions.BaseAddress = new Uri("https://localhost");
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         IConfigurationRoot configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:Postgres"] = dbContainer.GetConnectionString(),
-                ["Authentication:Base64Key"] = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)),
             })
             .Build();
         builder.UseConfiguration(configuration);
+        builder.ConfigureServices(services => services.AddSingleton<IDataProtectionProvider>(new EphemeralDataProtectionProvider()));
         builder.ConfigureLogging(cfg => cfg.ClearProviders());
         base.ConfigureWebHost(builder);
     }

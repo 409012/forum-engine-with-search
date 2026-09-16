@@ -1,7 +1,6 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Language.Flow;
 using FEwS.Forums.Domain.Authentication;
@@ -23,14 +22,6 @@ public class AuthenticationServiceShould
         var storage = new Mock<IAuthenticationStorage>();
         findSessionSetup = storage.Setup(s => s.FindSessionAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()));
 
-        var options = new Mock<IOptions<AuthenticationConfiguration>>();
-        options
-            .Setup(o => o.Value)
-            .Returns(new AuthenticationConfiguration
-            {
-                Base64Key = "XtDotH86WLjaEoFev6uZFN/3C0EQIApoD+5iqqmPtpg="
-            });
-        
         sut = new AuthenticationService(
             decryptor.Object,
             storage.Object,
@@ -44,6 +35,27 @@ public class AuthenticationServiceShould
         IIdentity actual = await sut.AuthenticateAsync("hahaha-bad-token", CancellationToken.None);
 
         actual.Should().BeEquivalentTo(User.Guest);
+    }
+
+    [Fact]
+    public async Task ReturnGuestIdentityWhenTokenHasInvalidFormat()
+    {
+        setupDecrypt.Throws<FormatException>();
+
+        IIdentity actual = await sut.AuthenticateAsync("invalid-base64!", CancellationToken.None);
+
+        actual.Should().BeEquivalentTo(User.Guest);
+    }
+
+    [Fact]
+    public async Task PropagateCancellation()
+    {
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+        setupDecrypt.Throws(new OperationCanceledException(cancellation.Token));
+
+        await sut.Invoking(service => service.AuthenticateAsync("token", cancellation.Token))
+            .Should().ThrowAsync<OperationCanceledException>();
     }
 
     [Fact]
