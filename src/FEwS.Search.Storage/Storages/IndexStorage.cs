@@ -16,7 +16,7 @@ internal class IndexStorage(IOpenSearchClient client) : IIndexStorage
             EntityType = (int)entityType,
             Title = title,
             Text = text,
-        }, descriptor => descriptor, cancellationToken);
+        }, descriptor => descriptor.Id($"{(int)entityType}:{entityId:D}"), cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
         if (!response.IsValid)
